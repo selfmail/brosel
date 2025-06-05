@@ -1,6 +1,6 @@
 {
-  "name": "react",
-  "module": "index.ts",
+  "name": "brosel-react-template",
+  "module": "src/index.ts",
   "type": "module",
   "private": true,
   "devDependencies": {

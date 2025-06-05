@@ -3,14 +3,13 @@ import {
 	confirm,
 	group,
 	intro,
-	multiselect,
 	outro,
 	select,
 	tasks,
-	text,
 } from "@clack/prompts";
 import { $ } from "bun";
 import { defineCommand, runMain, showUsage } from "citty";
+import { vscodeSettings } from "./templates";
 
 const main = defineCommand({
 	meta: {
@@ -60,6 +59,10 @@ const main = defineCommand({
 						message: "Should we create a git repository and stage the changes?",
 						initialValue: true,
 					}),
+				useBiome: () => confirm({
+					message: "Do you want to use biome?",
+					initialValue: true,
+				})
 			},
 			{
 				// On Cancel callback that wraps the group
@@ -108,6 +111,21 @@ const main = defineCommand({
 					},
 				},
 			]);
+		}
+
+		if (conf.useBiome) {
+			await tasks([
+				{
+					title: "Installing and configuring biome",
+					task: async (message) => {
+						await $`bun add --dev --exact @biomejs/biome`
+						message("Installed biome, now creating config file")
+						await $`bunx biome init`
+						await Bun.write(".vscode/settings.json", vscodeSettings)
+						return "Biome installed!";
+					},
+				},
+			])
 		}
 
 		outro("🎉 Project created! 🎉");
