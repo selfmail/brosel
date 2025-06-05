@@ -1,4 +1,4 @@
-# Brosel
+**Brösel**
 
 Brosel is a minimal [bun](https://bun.sh) fullstack framework. It's supporting SSR. To support us, please star the [repo](https://git.new/brosel).
 
