@@ -74,14 +74,43 @@ const main = defineCommand({
 		// run the tasks to create the project
 		await tasks([
 			{
-				title: "Create new bun project.",
+				title: `Cloning the brosel template for ${conf.frontendLibrary}`,
 				task: async (message) => {
-					await $`bun init ${args.name} -y`;
-					// Do installation here
-					return "New bun project successfully created.";
+					await $`bunx gitpick i-am-henri/brosel/templates/${conf.frontendLibrary}`
+					return "Template cloned!";
 				},
 			},
 		]);
+
+		if (conf.installDeps) {
+			await tasks([
+				{
+					title: "Installing dependencies",
+					task: async (message) => {
+						await $`bunx npm i`
+						return "Dependencies installed!";
+					},
+				},
+			]);
+		}
+
+		if (conf.createGitRepo) {
+			await tasks([
+				{
+					title: "Creating git repository",
+					task: async (message) => {
+
+						const install = await $`git init`
+						if (install.exitCode !== 0) {
+							return "Git repository creation failed! Do you have git installed?";
+						}
+						return "Git repository created!";
+					},
+				},
+			]);
+		}
+
+		outro("🎉 Project created! 🎉");
 	},
 });
 
