@@ -1,0 +1,30 @@
+{
+	"name": "www",
+	"module": "src/index.ts",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"dev": "bun run --watch src/index.ts",
+		"tailwind": "tailwindcss -i ./src/global.css -o ./.brosel/generated.css --watch",
+		"build": "bun run build",
+		"start": "bun run start"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@types/bun": "^1.2.15",
+		"@types/react": "^19.1.6",
+		"@types/react-dom": "^19.1.6"
+	},
+	"peerDependencies": {
+		"typescript": "^5.8.3"
+	},
+	"dependencies": {
+		"@tailwindcss/cli": "^4.1.8",
+		"bun-plugin-tailwind": "^0.0.15",
+		"lucide-react": "^0.513.0",
+		"react": "^19.1.0",
+		"react-dom": "^19.1.0",
+		"tailwindcss": "^4.1.8",
+		"zod": "^3.25.55"
+	}
+}
