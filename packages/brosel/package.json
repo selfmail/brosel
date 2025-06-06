@@ -1,32 +1,25 @@
 {
-	"name": "create-brosel",
-	"description": "Create a new brosel project with a single command.",
+	"name": "brosel",
+	"main": "dist/index.js",
 	"version": "0.0.1",
 	"license": "MIT",
 	"author": "Henri G <henri.development@icloud.com>",
 	"homepage": "https://brosel.henri.is",
-	"module": "src/index.ts",
-	"type": "module",
-	"bin": {
-		"create-brosel": "dist/index.js"
-	},
+	"description": "A minimal fullstack framework for building web applications with React and Bun.",
+	"keywords": ["bun", "react", "framework", "fullstack", "web", "application"],
 	"bugs": {
 		"url": "https://github.com/i-am-henri/brosel/issues"
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/i-am-henri/brosel.git",
-		"directory": "packages/cli"
+		"directory": "packages/brosel"
 	},
+	"type": "module",
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
 		"@types/bun": "latest"
 	},
 	"peerDependencies": {
 		"typescript": "^5"
-	},
-	"dependencies": {
-		"@clack/prompts": "^0.11.0",
-		"citty": "^0.1.6"
 	}
 }
