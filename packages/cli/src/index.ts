@@ -3,6 +3,7 @@ import {
 	confirm,
 	group,
 	intro,
+	log,
 	outro,
 	select,
 	tasks,
@@ -59,14 +60,13 @@ const main = defineCommand({
 						message: "Should we create a git repository and stage the changes?",
 						initialValue: true,
 					}),
-				useBiome: () => confirm({
-					message: "Do you want to use biome?",
-					initialValue: true,
-				})
+				useBiome: () =>
+					confirm({
+						message: "Do you want to use biome?",
+						initialValue: true,
+					}),
 			},
 			{
-				// On Cancel callback that wraps the group
-				// So if the user cancels one of the prompts in the group this function will be called
 				onCancel: ({ results }) => {
 					cancel("Operation cancelled. Bye bye!");
 					process.exit(0);
@@ -79,7 +79,15 @@ const main = defineCommand({
 			{
 				title: `Cloning the brosel template for ${conf.frontendLibrary}`,
 				task: async (message) => {
-					await $`bunx gitpick i-am-henri/brosel/templates/${conf.frontendLibrary}`
+					const clone =
+						await $`bunx gitpick i-am-henri/brosel/templates/${conf.frontendLibrary} ${args.name}`
+							.nothrow()
+							.quiet();
+
+					if (clone.exitCode !== 0) {
+						log.error("Cloning of template failed!");
+						process.exit(1);
+					}
 					return "Template cloned!";
 				},
 			},
@@ -90,7 +98,13 @@ const main = defineCommand({
 				{
 					title: "Installing dependencies",
 					task: async (message) => {
-						await $`bunx npm i`
+						const install = await $`bun i`.nothrow().quiet();
+
+						if (install.exitCode !== 0) {
+							log.error("Dependencies installation failed!");
+							process.exit(1);
+						}
+
 						return "Dependencies installed!";
 					},
 				},
@@ -102,8 +116,8 @@ const main = defineCommand({
 				{
 					title: "Creating git repository",
 					task: async (message) => {
+						const install = await $`git init`.nothrow().quiet();
 
-						const install = await $`git init`
 						if (install.exitCode !== 0) {
 							return "Git repository creation failed! Do you have git installed?";
 						}
@@ -118,14 +132,25 @@ const main = defineCommand({
 				{
 					title: "Installing and configuring biome",
 					task: async (message) => {
-						await $`bun add --dev --exact @biomejs/biome`
-						message("Installed biome, now creating config file")
-						await $`bunx biome init`
-						await Bun.write(".vscode/settings.json", vscodeSettings)
+						const biomeInstall = await $`bun add --dev --exact @biomejs/biome`
+							.nothrow()
+							.quiet();
+						if (biomeInstall.exitCode !== 0) {
+							log.error("Biome installation failed!");
+							process.exit(1);
+						}
+						message("Installed biome, now creating config file");
+						const biomeInit = await $`bunx biome init`.nothrow().quiet();
+						if (biomeInit.exitCode !== 0) {
+							log.error("Biome init failed!");
+							process.exit(1);
+						}
+
+						await Bun.write(".vscode/settings.json", vscodeSettings);
 						return "Biome installed!";
 					},
 				},
-			])
+			]);
 		}
 
 		outro("🎉 Project created! 🎉");

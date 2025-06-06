@@ -1,15 +1,7 @@
-# react
+**Brösel**
 
-To install dependencies:
+Brosel is a minimal [bun](https://bun.sh) fullstack framework. It's supporting SSR. To support us, please star the [repo](https://git.new/brosel).
 
-```bash
-bun install
-```
+To get started, either create routes at the `/src/pages` folder or edit src `src/index.ts` to add own routes/rules. You can read the docs [here](https://brosel.henri.is/docs).
 
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.2.8. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+Happy hacking!

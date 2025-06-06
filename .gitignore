@@ -2,6 +2,8 @@ node_modules
 
 .turbo
 .brosel
+.DS_Store
+
 
 # Not including lock files in templates.
 templates/*/node_modules

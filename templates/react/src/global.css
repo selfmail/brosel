@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+p {
+    @apply text-[#555];
+}
+
+
+code {
+    @apply text-[#555] bg-[#eee] rounded-sm px-1 py-0.5 font-mono;
+}
