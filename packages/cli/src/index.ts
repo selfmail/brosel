@@ -80,7 +80,7 @@ const main = defineCommand({
 				title: `Cloning the brosel template for ${conf.frontendLibrary}`,
 				task: async (message) => {
 					const clone =
-						await $`bunx gitpick i-am-henri/brosel/templates/${conf.frontendLibrary} ${args.name}`
+						await $`bunx gitpick i-am-henri/brosel/tree/main/templates/${conf.frontendLibrary} ${args.name}`
 							.nothrow()
 							.quiet();
 
@@ -98,9 +98,13 @@ const main = defineCommand({
 				{
 					title: "Installing dependencies",
 					task: async (message) => {
-						const install = await $`bun i`.nothrow().quiet();
+						await Bun.sleep(1000);
+						const install = await $`cd ${args.name} && bun install`
+							.nothrow()
+							.quiet();
 
 						if (install.exitCode !== 0) {
+							log.info(`${install.stdout}\n${install.stderr}`);
 							log.error("Dependencies installation failed!");
 							process.exit(1);
 						}
@@ -116,7 +120,9 @@ const main = defineCommand({
 				{
 					title: "Creating git repository",
 					task: async (message) => {
-						const install = await $`git init`.nothrow().quiet();
+						const install = await $`cd ${args.name} && git init`
+							.nothrow()
+							.quiet();
 
 						if (install.exitCode !== 0) {
 							return "Git repository creation failed! Do you have git installed?";
@@ -132,21 +138,27 @@ const main = defineCommand({
 				{
 					title: "Installing and configuring biome",
 					task: async (message) => {
-						const biomeInstall = await $`bun add --dev --exact @biomejs/biome`
-							.nothrow()
-							.quiet();
+						const biomeInstall =
+							await $`cd ${args.name} && bun add --dev --exact @biomejs/biome`
+								.nothrow()
+								.quiet();
 						if (biomeInstall.exitCode !== 0) {
 							log.error("Biome installation failed!");
 							process.exit(1);
 						}
 						message("Installed biome, now creating config file");
-						const biomeInit = await $`bunx biome init`.nothrow().quiet();
+						const biomeInit = await $`cd ${args.name} && bunx biome init`
+							.nothrow()
+							.quiet();
 						if (biomeInit.exitCode !== 0) {
 							log.error("Biome init failed!");
 							process.exit(1);
 						}
 
-						await Bun.write(".vscode/settings.json", vscodeSettings);
+						await Bun.write(
+							`${args.name}/.vscode/settings.json`,
+							vscodeSettings,
+						);
 						return "Biome installed!";
 					},
 				},
