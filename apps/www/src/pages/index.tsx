@@ -27,7 +27,7 @@ export const Component = () => {
 			props={{}}
 			path="index"
 		>
-			<Header />
+			<Header path="/" />
 			<div className="h-[80vh] flex items-center flex-col space-y-3 justify-center w-full">
 				<h1 className="text-5xl font-bold">Your Framework</h1>
 				<p>Every piece is customizable, so you can adapt it for your needs.</p>
@@ -54,13 +54,30 @@ export const Component = () => {
 					</a>
 				</div>
 			</div>
-			<div className="h-[40vh] flex flex-row justify-center w-full lg:px-12">
-				<div className="flex space-y-3 flex-col rounded-xl border p-4">
+			<div className="h-[40vh] grid grid-cols-3 gap-4 w-full lg:px-16">
+				<div className="flex space-y-3 flex-col rounded-xl p-4">
 					<h2 className="text-xl">Typesafe</h2>
 					<p>
 						Brösel is a minimal fullstack framework for building web
 						applications with React and Bun. To get started, create a new
 						project with <code>bun create brosel</code>!
+					</p>
+				</div>
+				<div className="flex space-y-3 flex-col rounded-xl p-4">
+					<h2 className="text-xl">Your code</h2>
+					<p>
+						Brösel lives in your application, in the <code>brosel</code> folder.
+						You can edit files, add new features and so on. Think of shadcn/ui
+						but as a fullstack framework.
+					</p>
+				</div>
+				<div className="flex space-y-3 flex-col rounded-xl p-4">
+					<h2 className="text-xl">Server & Client</h2>
+					<p>
+						Your application is first rendered on the server, after that
+						hydrated on the client. This means that you can access cookies,
+						files and more from the server, and after that you can pass them to
+						the client.
 					</p>
 				</div>
 			</div>
