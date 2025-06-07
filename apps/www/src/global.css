@@ -1,12 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @import "tailwindcss";
 
-p {
-	@apply text-[#555];
+p,
+a {
+	@apply text-[#555] text-sm;
 }
 
 * {
-	@apply font-sans font-medium;
 	font-family: "Inter", sans-serif;
 	font-optical-sizing: auto;
 	font-weight: 500;

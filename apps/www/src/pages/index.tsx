@@ -1,10 +1,6 @@
 import { load, render } from "brosel";
 
-import GitHub from "../icons/github";
-
-import Header from "../components/header";
-
-import { ArrowRight } from "lucide-react";
+import ColoredText from "../components/colored-text";
 
 import RootLayout from "../layouts/root";
 
@@ -26,60 +22,101 @@ export const Component = () => {
 			}}
 			props={{}}
 			path="index"
+			className="flex justify-center w-full min-h-screen"
 		>
-			<Header path="/" />
-			<div className="h-[80vh] flex items-center flex-col space-y-3 justify-center w-full">
-				<h1 className="text-5xl font-bold">Your Framework</h1>
-				<p>Every piece is customizable, so you can adapt it for your needs.</p>
-				<div className="flex space-x-3">
-					<button
-						className="px-4 flex space-x-2 items-center py-1 rounded-lg cursor-pointer  transition-all  border border-neutral-200 hover:bg-neutral-100"
-						type="button"
-					>
-						Get Started
-					</button>
-					<a
-						href="http://github.com/i-am-henri/brosel"
-						target="_blank"
-						rel="noreferrer"
-					>
-						<button
-							className="px-4 group flex space-x-2 items-center py-1 rounded-lg cursor-pointer  transition-all hover:bg-neutral-100"
-							type="button"
+			<div className="lg:w-[600px] lg:pt-24 flex flex-col space-y-12">
+				<div className="flex items-center justify-between">
+					<h2 className="text-base font-medium">Brösel</h2>
+					<nav className="space-x-3">
+						<a href="/docs">Docs</a>
+						<a href="/blog">Blog</a>
+						<a href="https://github.com/i-am-henri/brosel">Github</a>
+					</nav>
+				</div>
+				<div className="flex flex-col space-y-3">
+					<h1 className="text-2xl">
+						Brösel is your framework – custimizable in every single function
+						without compromises
+					</h1>
+					<p>
+						Brosel lives in your <code>brosel</code> folder, right inside your
+						project. You can edit every function, customize it, fix bugs and
+						make it your own!
+					</p>
+				</div>
+				<div className="flex flex-col space-y-3">
+					<h3 className="text-base font-medium">
+						Do we need another framework?
+					</h3>
+					<p>
+						Good Question – maybe. Brösel doesn't overcomplicate things, it's a
+						minimal framework. It's not a framework for everyone, it's a
+						framework for you. To answer this question: maybe the world doesn't
+						need another framework, but maybe you need your own.
+					</p>
+				</div>
+				<div className="flex flex-col space-y-3">
+					<h3 className="text-base font-medium">Get Started</h3>
+					<p>
+						To get started, run <code>bun create brosel</code> inside your
+						terminal. You need to install{" "}
+						<a
+							href="https://bun.sh"
+							target="_blank"
+							className="underline"
+							rel="noreferrer"
 						>
-							<GitHub />
-							<span>Github</span>
-							<ArrowRight className="size-4 text-[#555] opacity-0 group-hover:translate-x-[2px] group-hover:opacity-100 group-focus-visible:translate-x-[2px] group-focus-visible:opacity-100  duration-300" />
-						</button>
-					</a>
-				</div>
-			</div>
-			<div className="h-[40vh] grid grid-cols-3 gap-4 w-full lg:px-16">
-				<div className="flex space-y-3 flex-col rounded-xl p-4">
-					<h2 className="text-xl">Typesafe</h2>
-					<p>
-						Brösel is a minimal fullstack framework for building web
-						applications with React and Bun. To get started, create a new
-						project with <code>bun create brosel</code>!
+							Bun
+						</a>{" "}
+						for running this command. You can choose your name of the project,
+						the frontend library and some other options. After that, the project
+						get's created and you can start hacking!
 					</p>
 				</div>
-				<div className="flex space-y-3 flex-col rounded-xl p-4">
-					<h2 className="text-xl">Your code</h2>
+				<div className="flex flex-col space-y-3">
+					<h3 className="font-medium text-base">First steps</h3>
 					<p>
-						Brösel lives in your application, in the <code>brosel</code> folder.
-						You can edit files, add new features and so on. Think of shadcn/ui
-						but as a fullstack framework.
+						The framework won't be much different to other frameworks like
+						nextjs. You place your assets in the <code>assets</code> folder,
+						sites in the <code>src/pages</code> folder and api routes in the{" "}
+						<code>src/routes</code> folder. All of your pages, assets and routes
+						are going to be load into the <code>src/index.ts</code> file, which
+						is a file with the bun server (It's using bun's <code>serve()</code>{" "}
+						function). To create a new page, create a new file in the{" "}
+						<code>src/pages</code> folder and export the <code>load()</code>{" "}
+						function from brosel! If you don't specify a custom path, the path
+						of the file will be used.
 					</p>
 				</div>
-				<div className="flex space-y-3 flex-col rounded-xl p-4">
-					<h2 className="text-xl">Server & Client</h2>
-					<p>
-						Your application is first rendered on the server, after that
-						hydrated on the client. This means that you can access cookies,
-						files and more from the server, and after that you can pass them to
-						the client.
-					</p>
-				</div>
+				<a
+					href="/docs"
+					className="flex p-4 flex-col border transition-all border-neutral-200 hover:bg-neutral-100 rounded-md"
+				>
+					<h2 className="text-base text-black font-medium">Learn more</h2>
+					<p>Learn more with the Brösel Docs!</p>
+				</a>
+				<footer className="bg-neutral-100 flex justify-between rounded-xl p-4 mb-24">
+					<h2 className="text-base font-medium">
+						<ColoredText text="Brösel" />
+					</h2>
+					<div className="flex flex-col space-y-3">
+						<a href="/docs" className="underline">
+							Docs
+						</a>
+						<a href="/blog" className="underline">
+							Blog
+						</a>
+						<a href="/examples" className="underline">
+							Examples
+						</a>
+						<a
+							href="https://github.com/i-am-henri/brosel"
+							className="underline"
+						>
+							Github
+						</a>
+					</div>
+				</footer>
 			</div>
 		</RootLayout>
 	);
