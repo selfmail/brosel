@@ -1,10 +1,14 @@
 import { z } from "zod";
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
-export async function getRoutes(): Promise<{
-	path: string;
-	handler: Partial<Record<HttpMethod, (req: Request) => Response | Promise<Response>>>;
-}[]> {
+export async function getRoutes(): Promise<
+	{
+		path: string;
+		handler: Partial<
+			Record<HttpMethod, (req: Request) => Response | Promise<Response>>
+		>;
+	}[]
+> {
 	const router = new Bun.FileSystemRouter({
 		style: "nextjs",
 		dir: `${process.cwd()}/src/routes`,
@@ -12,7 +16,9 @@ export async function getRoutes(): Promise<{
 
 	const routes: {
 		path: string;
-		handler: Partial<Record<HttpMethod, (req: Request) => Response | Promise<Response>>>
+		handler: Partial<
+			Record<HttpMethod, (req: Request) => Response | Promise<Response>>
+		>;
 	}[] = [];
 
 	for await (const [path] of Object.entries(router.routes)) {
@@ -22,27 +28,37 @@ export async function getRoutes(): Promise<{
 
 		const route = mod.default as {
 			path: string;
-			routes: Partial<Record<HttpMethod, (req: Request) => Response | Promise<Response>>>;
+			routes: Partial<
+				Record<HttpMethod, (req: Request) => Response | Promise<Response>>
+			>;
 		};
 
-        const handlerSchema = z.object({
-            GET: z.function().args(z.instanceof(Request)).returns(z.any()).optional(),
-            POST: z.function().args(z.instanceof(Request)).returns(z.any()).optional(),
-            PUT: z.function().args(z.instanceof(Request)).returns(z.any()).optional(),
-            DELETE: z.function().args(z.instanceof(Request)).returns(z.any()).optional(),
-        });
+		const handlerSchema = z.object({
+			GET: z.function().args(z.instanceof(Request)).returns(z.any()).optional(),
+			POST: z
+				.function()
+				.args(z.instanceof(Request))
+				.returns(z.any())
+				.optional(),
+			PUT: z.function().args(z.instanceof(Request)).returns(z.any()).optional(),
+			DELETE: z
+				.function()
+				.args(z.instanceof(Request))
+				.returns(z.any())
+				.optional(),
+		});
 
-		console.log(route)
-        
-        const routeSchema = await z.object({
-            path: z.string(),
-            routes: handlerSchema,
-        }).safeParseAsync(route)
+		const routeSchema = await z
+			.object({
+				path: z.string(),
+				routes: handlerSchema,
+			})
+			.safeParseAsync(route);
 
-        if (!routeSchema.success) {
-            console.log(routeSchema.error.issues)
-            throw new Error("Failed to parse route")
-        }
+		if (!routeSchema.success) {
+			console.log(routeSchema.error.issues);
+			throw new Error("Failed to parse route");
+		}
 
 		routes.push({
 			path: route.path,
@@ -50,5 +66,5 @@ export async function getRoutes(): Promise<{
 		});
 	}
 
-	return routes
+	return routes;
 }

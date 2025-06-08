@@ -2,6 +2,7 @@ import { load, render } from "brosel";
 
 import ColoredText from "../components/colored-text";
 
+import Header from "../components/header";
 import RootLayout from "../layouts/root";
 
 export default load({
@@ -25,14 +26,7 @@ export const Component = () => {
 			className="flex justify-center w-full min-h-screen"
 		>
 			<div className="lg:w-[600px] lg:pt-24 flex flex-col space-y-12">
-				<div className="flex items-center justify-between">
-					<h2 className="text-base font-medium">Brösel</h2>
-					<nav className="space-x-3">
-						<a href="/docs">Docs</a>
-						<a href="/blog">Blog</a>
-						<a href="https://github.com/i-am-henri/brosel">Github</a>
-					</nav>
-				</div>
+				<Header />
 				<div className="flex flex-col space-y-3">
 					<h1 className="text-2xl">
 						Brösel is your framework – custimizable in every single function

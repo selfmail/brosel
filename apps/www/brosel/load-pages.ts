@@ -17,16 +17,12 @@ export async function getPages(): Promise<Page[]> {
 
 	for (const page of Object.keys(router.routes)) {
 		let file = page === "/" ? "/index" : page;
-		console.log(file);
 
-		if (await Bun.file(`${process.cwd()}/src/pages${file}.tsx`).exists()) {
-			console.log("exists");
-		} else {
-			if (
-				await Bun.file(`${process.cwd()}/src/pages${file}/index.tsx`).exists()
-			) {
-				file = `${file}/index`;
-			}
+		if (
+			!(await Bun.file(`${process.cwd()}/src/pages${file}.tsx`).exists()) &&
+			(await Bun.file(`${process.cwd()}/src/pages${file}/index.tsx`).exists())
+		) {
+			file = `${file}/index`;
 		}
 
 		const module = await import(`${process.cwd()}/src/pages${file}.tsx`);
