@@ -100,10 +100,16 @@ export async function getPages(): Promise<Page[]> {
 		}
 
 		pages.push({
-			path: serverFunction.default?.path || routePath,
-			handler: serverFunction.default?.handler,
+			path: serverFunction.default.path
+				? serverFunction.default.path
+				: routePath === ""
+					? "/"
+					: (routePath as string),
+			handler: serverFunction.default.handler,
 		});
 	}
+
+	console.log(pages);
 
 	return pages;
 }

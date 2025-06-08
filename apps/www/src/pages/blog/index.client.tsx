@@ -26,7 +26,7 @@ export default function AllBlogPostsClient({
 				description:
 					"Brösel is a minimal fullstack framework for building web applications with React and Bun.",
 			}}
-			props={{}}
+			props={{ blogPosts }}
 			path="blog-all"
 		>
 			<div>All Blog Posts</div>

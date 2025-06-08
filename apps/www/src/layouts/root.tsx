@@ -28,7 +28,7 @@ export default function RootLayout({
 						__html: `window.__INITIAL_PROPS__ = ${JSON.stringify(props)}`,
 					}}
 				/>
-				<script src={`/scripts/client-${path}.js`}></script>
+				<script src={`/scripts/client${path === "" ? "" : `-${path}`}.js`}></script>
 			</body>
 		</html>
 	);

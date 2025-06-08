@@ -1,5 +1,5 @@
 /// <reference lib="dom" />
-import Component from "/Users/henrigenerlich/Documents/code/brosel/apps/www/src/pages/home.client.tsx";
+import Component from "/Users/henrigenerlich/Documents/code/brosel/apps/www/src/pages/index.client.tsx";
 import { hydrateRoot } from "react-dom/client";
 
 const props = (
