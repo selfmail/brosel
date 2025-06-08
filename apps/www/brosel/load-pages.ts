@@ -1,63 +1,77 @@
+import type { BunRequest } from "bun";
 import { z } from "zod";
 import { hydrationTemplate } from "./templates";
-import type { BunRequest } from "bun";
 
 interface Page {
-    path: string,
-    handler: (req: BunRequest<string>) => Promise<Response>
+	path: string;
+	handler: (req: BunRequest<string>) => Promise<Response>;
 }
 
 export async function getPages(): Promise<Page[]> {
-    const router = new Bun.FileSystemRouter({
-        style: "nextjs",
-        dir: `${process.cwd()}/src/pages`,
-    });
+	const router = new Bun.FileSystemRouter({
+		style: "nextjs",
+		dir: `${process.cwd()}/src/pages`,
+	});
 
-    const pages: Page[] = [];
+	const pages: Page[] = [];
 
-    for (const page of Object.keys(router.routes)) {
-        let file = page === "/" ? "/index" : page;
-        const module = await import(`${process.cwd()}/src/pages${file}.tsx`);
+	for (const page of Object.keys(router.routes)) {
+		let file = page === "/" ? "/index" : page;
+		console.log(file);
 
-        const schema = await  z.object({
-            component: z.any(),
-            server: z.object({
-                path: z.string().optional(),
-                handler: z.function()
-            })
-        }).safeParseAsync({
-            component: module.component,
-            server: module.server || module.default,
-        })
+		if (await Bun.file(`${process.cwd()}/src/pages${file}.tsx`).exists()) {
+			console.log("exists");
+		} else {
+			if (
+				await Bun.file(`${process.cwd()}/src/pages${file}/index.tsx`).exists()
+			) {
+				file = `${file}/index`;
+			}
+		}
 
-        if (!schema.success) {
-            console.error(`Failed to parse the page ${file}. Error: ${schema.error}`);
-            break
-        }
+		const module = await import(`${process.cwd()}/src/pages${file}.tsx`);
 
-        await Bun.write(`./src/static/client${file.replace(/\//g, "-")}.tsx`, hydrationTemplate(file));
+		const schema = await z
+			.object({
+				component: z.any(),
+				server: z.object({
+					path: z.string().optional(),
+					handler: z.function(),
+				}),
+			})
+			.safeParseAsync({
+				component: module.component,
+				server: module.server || module.default,
+			});
 
-        const build = await Bun.build({
-            entrypoints: [
-                `./src/static/client${file.replace(/\//g, "-")}.tsx`
-            ],
-            outdir: `${process.cwd()}/.brosel`,
-            minify: true,
-            target: "browser",
-        })
+		if (!schema.success) {
+			console.error(`Failed to parse the page ${file}. Error: ${schema.error}`);
+			break;
+		}
 
-        if (!build.success) {
-            throw new Error(build.logs.map(log => log.message).join("\n"))
-        }
+		await Bun.write(
+			`./src/static/client${file.replace(/\//g, "-")}.tsx`,
+			hydrationTemplate(file),
+		);
 
+		const build = await Bun.build({
+			entrypoints: [`./src/static/client${file.replace(/\//g, "-")}.tsx`],
+			outdir: `${process.cwd()}/.brosel`,
+			minify: true,
+			target: "browser",
+		});
 
-        pages.push({
-            path: module.server?.path || module.default?.path || page,
-            handler: module.server?.handler || module.default?.handler
-        })
-    }
+		if (!build.success) {
+			throw new Error(build.logs.map((log) => log.message).join("\n"));
+		}
 
-    console.log(`> Built ${pages.length} page${pages.length === 1 ? "" : "s"}`)
+		pages.push({
+			path: module.server?.path || module.default?.path || page,
+			handler: module.server?.handler || module.default?.handler,
+		});
+	}
 
-    return pages
+	console.log(`> Built ${pages.length} page${pages.length === 1 ? "" : "s"}`);
+
+	return pages;
 }
