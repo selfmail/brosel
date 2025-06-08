@@ -7,12 +7,14 @@ Code templates for the loading functions.
  * save the props from the server. This code will be transformed with bun to a javascript file, stored in the `.brosel` folder.
  */
 export const hydrationTemplate = (file: string) => `/// <reference lib="dom" />
-import { Component } from "../pages${file}";
+import Component from "${file}";
 import { hydrateRoot } from "react-dom/client";
 
-const props = (window as any).__INITIAL_PROPS__;
+const props = (
+	window as Window &
+		typeof globalThis & { __INITIAL_PROPS__: Record<string, unknown> }
+).__INITIAL_PROPS__;
 
 
 hydrateRoot(document, <Component {...props} />);
-`
-
+`;

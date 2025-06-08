@@ -9,7 +9,7 @@ const assets = await getAssets();
 const pages = await getPages();
 const scripts = await getScripts();
 const routes = await getRoutes();
-export const blog = await loadMarkdownFiles({
+export const blog = loadMarkdownFiles({
 	path: "./src/blog",
 	format: {
 		title: z.string(),
@@ -18,6 +18,11 @@ export const blog = await loadMarkdownFiles({
 		author: z.string(),
 	},
 });
+
+const blogRoutes = (await blog).routes.map((route) => [
+	route.path,
+	route.handler,
+]);
 
 const server = serve({
 	port,
@@ -28,9 +33,7 @@ const server = serve({
 			scripts.map((script) => [script.path, script.handler]),
 		),
 		...Object.fromEntries(routes.map((route) => [route.path, route.handler])),
-		...Object.fromEntries(
-			blog.routes.map((route) => [route.path, route.handler]),
-		),
+		...Object.fromEntries(blogRoutes),
 
 		// global.css file
 		"/style.css": async () => {
