@@ -52,8 +52,6 @@ export async function getPages(): Promise<Page[]> {
 
 	const files = await getClientAndServerPagePaths();
 
-	console.log(import.meta.url);
-
 	for (const page of files) {
 		const routePath = page.clientPath
 			.split("/pages")[1]
@@ -108,8 +106,6 @@ export async function getPages(): Promise<Page[]> {
 			handler: serverFunction.default.handler,
 		});
 	}
-
-	console.log(pages);
 
 	return pages;
 }

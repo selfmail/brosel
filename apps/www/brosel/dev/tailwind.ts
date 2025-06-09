@@ -8,7 +8,6 @@ export async function bundleTailwind() {
 	const baseFile = await Bun.file(
 		`${process.cwd()}/${config.globalCSS}`,
 	).text();
-
 	const res = await postcss([
 		tailwindPostcss({
 			base: baseFile,

@@ -47,3 +47,5 @@ const server = serve({
 });
 
 console.log(`Server running on http://localhost:${server.port}`);
+
+export default server;
