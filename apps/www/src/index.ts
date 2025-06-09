@@ -14,7 +14,7 @@ export const blog = loadMarkdownFiles({
 	format: {
 		title: z.string(),
 		description: z.string(),
-		date: z.string(),
+		date: z.date(),
 		author: z.string(),
 	},
 });

@@ -1,4 +1,5 @@
 import { load, render } from "brosel";
+import Component from "./index.client";
 
 export default load({
 	path: "/examples",
@@ -9,7 +10,3 @@ export default load({
 		});
 	},
 });
-
-export const Component = () => {
-	return <div>Examples</div>;
-};
