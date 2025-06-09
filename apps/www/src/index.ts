@@ -40,6 +40,10 @@ const server = serve({
 			return new Response(Bun.file("./.brosel/generated.css"));
 		},
 	},
+	development: true,
+	error(error) {
+		console.error(error);
+	},
 });
 
-console.log(`Server running on http://localhost:${port}`);
+console.log(`Server running on http://localhost:${server.port}`);

@@ -1,29 +1,13 @@
 import { load, render } from "brosel";
-import RootLayout from "../../layouts/root";
+import DocsPageComponent from "./pages.client";
 
 export default load({
-	path: "/docs/*",
-	handler: async () => {
+	path: "/docs/:id",
+	handler: async (req) => {
+		const { id } = req.params;
 		return await render({
-			component: <Component text="Hello" />,
-			props: { text: "Hello" },
+			component: <DocsPageComponent text={id} />,
+			props: { text: id },
 		});
 	},
 });
-
-export const Component = ({ text }: { text: string }) => {
-	return (
-		<RootLayout
-			metadata={{
-				title: "Brösel",
-				description:
-					"Brösel is a modern framework for building web applications with React and Bun.",
-			}}
-			props={{ text }}
-			path="docs"
-			className="flex items-center justify-center"
-		>
-			<div className="lg:w-[500px] lg:pt-24 flex flex-col space-y-12">hey</div>
-		</RootLayout>
-	);
-};

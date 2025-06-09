@@ -8,19 +8,19 @@ import type { JSX } from "react";
 import { renderToReadableStream } from "react-dom/server";
 import type { HttpMethod } from "./load-routes";
 
-export type LoadConfig = {
+export type LoadConfig<T extends string> = {
 	/**
 	 * We could also use the path from the file system router,
 	 * so this option is optional, but needed when you want a
 	 * catch-all route.
 	 */
-	path?: string;
+	path?: T;
 	/**
 	 * The function will be called when a request comes to the server.
 	 * The code in this function will be executed on the server. You return the
 	 * "render" function to render a page.
 	 */
-	handler: (req: BunRequest<string>) => Promise<Response>;
+	handler: (req: BunRequest<T>) => Promise<Response>;
 };
 
 /**
@@ -46,7 +46,7 @@ export type LoadConfig = {
  * })
  * ```
  */
-export const load = ({ path, handler }: LoadConfig) => {
+export const load = <T extends string>({ path, handler }: LoadConfig<T>) => {
 	return {
 		path,
 		handler,

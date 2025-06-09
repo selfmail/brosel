@@ -52,7 +52,7 @@ export async function getPages(): Promise<Page[]> {
 
 	const files = await getClientAndServerPagePaths();
 
-	console.log(files);
+	console.log(import.meta.url);
 
 	for (const page of files) {
 		const routePath = page.clientPath

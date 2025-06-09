@@ -1,3 +1,4 @@
+import Footer from "../../components/footer";
 import Header from "../../components/header";
 import RootLayout from "../../layouts/root";
 
@@ -31,7 +32,7 @@ export default function AllBlogPostsClient({
 			path="blog"
 			className="flex items-center justify-center"
 		>
-			<div className="lg:w-[500px] lg:pt-24 flex flex-col space-y-12">
+			<div className="lg:w-[600px] lg:pt-24 flex flex-col space-y-12">
 				<Header />
 				<div className="flex flex-col space-y-3">
 					<h2 className="text-lg font-medium">All blog posts</h2>
@@ -53,6 +54,7 @@ export default function AllBlogPostsClient({
 						</a>
 					))}
 				</div>
+				<Footer />
 			</div>
 		</RootLayout>
 	);
