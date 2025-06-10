@@ -5,9 +5,9 @@ type RouteHandler<Path extends string> = (
 	req: BunRequest<Path>,
 ) => Response | Promise<Response>;
 
-type ServerOptions<T extends Record<string, RouteHandler<string>>> = {
-	port: number;
-	hostname?: string;
+type ServerOptions<T extends Record<string, RouteHandler<string>>> = z.infer<
+	typeof ServerSchema
+> & {
 	routes: {
 		[K in keyof T]: RouteHandler<K & string>;
 	};
@@ -16,14 +16,12 @@ type ServerOptions<T extends Record<string, RouteHandler<string>>> = {
 		| Promise<Response>;
 };
 
-// Magie passiert hier: T wird konstant eingefroren
 export function server<const T extends Record<string, RouteHandler<string>>>(
 	options: ServerOptions<T>,
 ) {
 	return options;
 }
 
-// Define the server schema
 export const ServerSchema = z.object({
 	port: z.number().optional(),
 	hostname: z.string().optional(),

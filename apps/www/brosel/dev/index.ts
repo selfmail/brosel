@@ -6,7 +6,8 @@ import consola from "consola";
 import ora from "ora";
 import { z } from "zod/v4";
 import { getConfig } from "../config/get-config";
-import { ServerSchema, server } from "./server-options";
+import { getMarkdownFiles } from "./markdown";
+import { ServerSchema } from "./server-options";
 import { bundleTailwind } from "./tailwind";
 
 consola.ready("Starting development server...");
@@ -26,6 +27,9 @@ for (const dir of [config.assetsDir, config.pagesDir, config.routesDir]) {
 		process.exit(1);
 	}
 }
+
+// markdown plugin
+await getMarkdownFiles();
 
 const watcher = chokidar.watch(".");
 
@@ -62,6 +66,7 @@ if (typeof mainModule.default !== typeof {}) {
 	);
 	process.exit(1);
 }
+
 // running the main server from "src/index.ts"
 const parse = await ServerSchema.safeParseAsync(mainModule.default);
 if (!parse.success) {
@@ -70,7 +75,9 @@ if (!parse.success) {
 }
 
 const server = serve({
-	...(parse.data as any),
+	...(parse.data as Bun.ServeFunctionOptions<unknown, object>),
 });
+
+globalThis.server = server;
 
 console.log(`Server running on http://${server.hostname}:${server.port}`);

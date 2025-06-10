@@ -14,9 +14,30 @@ export const ConfigSchema = z.object({
 	globalCSS: z.string(),
 
 	port: z.number(),
+
+	// plugins
+	markdown: z
+		.record(
+			z.string(),
+			z.object({
+				path: z.string(),
+				extension: z.string(),
+				frontmatter: z.record(z.string(), z.any()),
+			}),
+		)
+		.optional(),
 });
 
-export type Config = z.infer<typeof ConfigSchema>;
+export type Config = Omit<z.infer<typeof ConfigSchema>, "markdown"> & {
+	markdown?: Record<
+		string,
+		{
+			path: string;
+			extension: string;
+			frontmatter: Record<string, z.ZodType>;
+		}
+	>;
+};
 
 export default function config({
 	tailwind = true,
@@ -27,6 +48,7 @@ export default function config({
 	globalCSS = "src/global.css",
 	routesDir = "src/routes",
 	port = 3000,
+	markdown,
 }: Partial<Config>): Config {
 	return {
 		tailwind,
@@ -37,5 +59,6 @@ export default function config({
 		devDir,
 		routesDir,
 		port,
+		markdown,
 	};
 }

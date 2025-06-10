@@ -25,36 +25,13 @@ const blogRoutes = (await blog).routes.map((route) => [
 	route.handler,
 ]);
 
-serve({
-	port,
-	routes: {
-		...Object.fromEntries(assets.map((asset) => [asset.path, asset.handler])),
-		...Object.fromEntries(pages.map((page) => [page.path, page.handler])),
-		...Object.fromEntries(
-			scripts.map((script) => [script.path, script.handler]),
-		),
-		...Object.fromEntries(routes.map((route) => [route.path, route.handler])),
-		...Object.fromEntries(blogRoutes),
-
-		// global.css file
-		"/style.css": async () => {
-			return new Response(Bun.file("./.brosel/generated.css"));
-		},
-	},
-	development: true,
-	error(error) {
-		console.error(error);
-	},
-});
-
-console.log(`Server running on http://localhost:${3000}`);
-
 export default server({
 	port: 3000,
 	routes: {
 		"/redire": (req) => {
 			return new Response("Hello World");
 		},
+		...Object.fromEntries(routes.map((route) => [route.path, route.handler])),
 	},
 	error: (err) => {
 		console.error(err);
