@@ -6,5 +6,3 @@ author: Henri
 ---
 
 # Hey
-
-Hey

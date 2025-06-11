@@ -2,7 +2,6 @@ import { exists } from "node:fs/promises";
 import { Glob } from "bun";
 import matter from "gray-matter";
 import { z } from "zod/v4";
-import type config from "../../config";
 import { getConfig } from "../config/get-config";
 
 export const getMarkdownFiles = async () => {

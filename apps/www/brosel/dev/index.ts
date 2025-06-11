@@ -3,21 +3,17 @@ import { serve } from "bun";
 import chalk from "chalk";
 import chokidar from "chokidar";
 import consola from "consola";
-import ora from "ora";
 import { z } from "zod/v4";
 import { getConfig } from "../config/get-config";
+import { loadAssets } from "../load";
 import { getMarkdownFiles } from "./markdown";
 import { ServerSchema } from "./server-options";
 import { bundleTailwind } from "./tailwind";
 
-consola.ready("Starting development server...");
-
 const config = await getConfig();
 
 if (config.tailwind) {
-	const tailwindSpinner = ora("Tailwind bundling...").start();
 	await bundleTailwind();
-	tailwindSpinner.succeed("Tailwind bundling done! Watching for changes...");
 }
 
 // check for required directories
@@ -38,7 +34,16 @@ const watcher = chokidar.watch(".");
  * restarts the server if there are any changes. It's also responsible for removing the client
  * side code in the `.brosel` folder.
  */
-watcher.on("change", async (path, stats) => {
+watcher.on("all", async (path, stats) => {
+	console.clear();
+	if (config.markdown) {
+		for (const [_, value] of Object.entries(config.markdown)) {
+			if (path.includes(value.path.replace("./", ""))) {
+				await getMarkdownFiles();
+			}
+		}
+	}
+
 	// handling tailwind changes
 	if (path.endsWith(".tsx") && config.tailwind) {
 		const start = Math.round(performance.now());
@@ -74,10 +79,16 @@ if (!parse.success) {
 	process.exit(1);
 }
 
+const assets = await loadAssets();
+console.log(assets);
+
 const server = serve({
 	...(parse.data as Bun.ServeFunctionOptions<unknown, object>),
 });
 
 globalThis.server = server;
 
-console.log(`Server running on http://${server.hostname}:${server.port}`);
+console.log(
+	`\n${chalk.greenBright(`Server running on http://${server.hostname}:${server.port} in dev-mode.`)}`,
+	`\n${chalk.grey(`Press ${chalk.cyanBright("CTRL + C")} to stop the server.`)}\n`,
+);
