@@ -1,5 +1,5 @@
 import { exists } from "node:fs/promises";
-import { serve } from "bun";
+import { $, serve } from "bun";
 import chalk from "chalk";
 import chokidar from "chokidar";
 import consola from "consola";
@@ -13,7 +13,15 @@ import { bundleTailwind } from "./tailwind";
 const config = await getConfig();
 
 if (config.tailwind) {
-	await bundleTailwind();
+	Bun.spawn([
+    "bunx",
+    "@tailwindcss/cli",
+    "-i",
+    `${process.cwd()}/${config.globalCSS}`,
+    "-o",
+    `${process.cwd()}/.brosel/out.css`,
+    "--watch",
+  ]);
 }
 
 // check for required directories

@@ -11,7 +11,7 @@ export async function bundleTailwind() {
 	const res = await postcss([
 		tailwindPostcss({
 			base: baseFile,
-			optimize: false,
+			optimize: true,
 		}),
 	]).process(baseFile, { from: baseFile });
 

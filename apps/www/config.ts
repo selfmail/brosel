@@ -3,6 +3,7 @@ import config from "./brosel/config";
 
 export default config({
 	tailwind: true,
+	devDir: ".brosel",
 	markdown: {
 		blog: {
 			path: "./src/blog",
