@@ -5,7 +5,7 @@ import chokidar from "chokidar";
 import consola from "consola";
 import { z } from "zod/v4";
 import { getConfig } from "../config/get-config";
-import { getRoutes, loadAssets } from "../load";
+import { loadAssets, loadClientScripts, loadPages, loadRoutes } from "../load";
 import { getMarkdownFiles } from "./markdown";
 import { ServerSchema } from "./server-options";
 import { bundleTailwind } from "./tailwind";
@@ -79,13 +79,17 @@ if (!parse.success) {
 }
 
 const assets = await loadAssets();
-const routes = await getRoutes();
+const routes = await loadRoutes();
+const pages = await loadPages();
+const scripts = await loadClientScripts();
 
 const server = serve({
 	...(parse.data as Bun.ServeFunctionOptions<unknown, object>),
 	routes: {
 		...routes,
 		...assets,
+		...pages,
+		...scripts,
 	},
 });
 

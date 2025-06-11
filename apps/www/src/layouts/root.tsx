@@ -18,7 +18,7 @@ export default function RootLayout({
 			<head>
 				<meta charSet="UTF-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-				<link rel="stylesheet" href="/style.css" />
+				<link rel="stylesheet" href="/assets/styles.css" />
 				<title>{metadata.title}</title>
 			</head>
 			<body {...bodyProps}>
@@ -28,7 +28,9 @@ export default function RootLayout({
 						__html: `window.__INITIAL_PROPS__ = ${JSON.stringify(props)}`,
 					}}
 				/>
-				<script src={`/scripts/client${path === "" ? "" : `-${path}`}.js`}></script>
+				<script
+					src={`/scripts/client${path === "" ? "" : `-${path}`}.js`}
+				></script>
 			</body>
 		</html>
 	);

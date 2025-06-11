@@ -72,6 +72,9 @@ export default function Component() {
 						of the file will be used.
 					</p>
 				</div>
+				<button type="button" onClick={() => alert("Hello World")}>
+					<ColoredText text="Get Started"></ColoredText>
+				</button>
 				<a
 					href="/docs"
 					className="flex p-4 flex-col border transition-all border-neutral-200 hover:bg-neutral-100 rounded-md"

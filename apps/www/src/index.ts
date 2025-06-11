@@ -33,9 +33,5 @@ export default server({
 		},
 		...Object.fromEntries(routes.map((route) => [route.path, route.handler])),
 	},
-	error: (err) => {
-		console.error(err);
-		return new Response(err.message, { status: err.code });
-	},
 	hostname: "localhost",
 });
