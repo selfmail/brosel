@@ -5,7 +5,7 @@ import chokidar from "chokidar";
 import consola from "consola";
 import { z } from "zod/v4";
 import { getConfig } from "../config/get-config";
-import { loadAssets } from "../load";
+import { getRoutes, loadAssets } from "../load";
 import { getMarkdownFiles } from "./markdown";
 import { ServerSchema } from "./server-options";
 import { bundleTailwind } from "./tailwind";
@@ -35,7 +35,6 @@ const watcher = chokidar.watch(".");
  * side code in the `.brosel` folder.
  */
 watcher.on("all", async (path, stats) => {
-	console.clear();
 	if (config.markdown) {
 		for (const [_, value] of Object.entries(config.markdown)) {
 			if (path.includes(value.path.replace("./", ""))) {
@@ -80,10 +79,14 @@ if (!parse.success) {
 }
 
 const assets = await loadAssets();
-console.log(assets);
+const routes = await getRoutes();
 
 const server = serve({
 	...(parse.data as Bun.ServeFunctionOptions<unknown, object>),
+	routes: {
+		...routes,
+		...assets,
+	},
 });
 
 globalThis.server = server;
