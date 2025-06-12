@@ -8,20 +8,24 @@ import { getConfig } from "../config/get-config";
 import { loadAssets, loadClientScripts, loadPages, loadRoutes } from "../load";
 import { getMarkdownFiles } from "./markdown";
 import { ServerSchema } from "./server-options";
-import { bundleTailwind } from "./tailwind";
-
 const config = await getConfig();
 
 if (config.tailwind) {
-	Bun.spawn([
-    "bunx",
-    "@tailwindcss/cli",
-    "-i",
-    `${process.cwd()}/${config.globalCSS}`,
-    "-o",
-    `${process.cwd()}/.brosel/out.css`,
-    "--watch",
-  ]);
+	Bun.spawn(
+		[
+			"bunx",
+			"@tailwindcss/cli",
+			"-i",
+			`${process.cwd()}/${config.globalCSS}`,
+			"-o",
+			`${process.cwd()}/.brosel/out.css`,
+			"--watch",
+		],
+		{
+			stdout: "ignore",
+			stderr: "ignore",
+		},
+	);
 }
 
 // check for required directories
@@ -49,14 +53,6 @@ watcher.on("all", async (path, stats) => {
 				await getMarkdownFiles();
 			}
 		}
-	}
-
-	// handling tailwind changes
-	if (path.endsWith(".tsx") && config.tailwind) {
-		const start = Math.round(performance.now());
-		await bundleTailwind();
-		const end = Math.round(performance.now());
-		consola.info(`Tailwind bundling took ${end - start}ms`);
 	}
 
 	// handling routing changes

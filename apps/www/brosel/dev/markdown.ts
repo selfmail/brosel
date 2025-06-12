@@ -53,7 +53,7 @@ export const getMarkdownFiles = async () => {
 					fileExtension: extension,
 				},
 				data: parse.data,
-				content,
+				content: json.content,
 			});
 		}
 

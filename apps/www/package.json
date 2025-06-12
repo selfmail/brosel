@@ -33,6 +33,7 @@
 		"postcss": "^8.5.4",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",
+		"react-markdown": "^10.1.0",
 		"tailwindcss": "^4.1.8",
 		"zod": "^3.25.55"
 	}

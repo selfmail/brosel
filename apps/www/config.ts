@@ -15,5 +15,14 @@ export default config({
 				author: z.string(),
 			},
 		},
+		docs: {
+			path: "./src/docs",
+			extension: "md",
+			frontmatter: {
+				title: z.string(),
+				description: z.string(),
+				author: z.string(),
+			},
+		},
 	},
 });
