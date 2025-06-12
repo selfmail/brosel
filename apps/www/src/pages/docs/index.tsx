@@ -1,5 +1,5 @@
 import { load, render } from "brosel";
-import { loadMarkdownFiles } from "../../../brosel/dev/markdown";
+import { loadMarkdownFiles } from "../../../brosel/markdown";
 import RootLayout from "../../layouts/root";
 import DocsComponent from "./index.client";
 
@@ -22,7 +22,6 @@ export default load({
 			};
 		};
 		if (!file) return Response.redirect("/");
-		console.log(file);
 		return await render({
 			component: (
 				<DocsComponent

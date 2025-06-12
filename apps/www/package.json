@@ -4,10 +4,8 @@
 	"type": "module",
 	"private": true,
 	"scripts": {
-		"dev": "bun run --hot brosel/dev",
-		"tailwind": "tailwindcss -i ./src/global.css -o ./.brosel/generated.css --watch",
-		"build": "bun run build",
-		"start": "bun run start"
+		"dev": "bun run brosel/dev",
+		"start": "bun run brosel/start"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",

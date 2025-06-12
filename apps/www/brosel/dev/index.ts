@@ -5,8 +5,8 @@ import chokidar from "chokidar";
 import consola from "consola";
 import { z } from "zod/v4";
 import { getConfig } from "../config/get-config";
-import { loadAssets, loadClientScripts, loadPages, loadRoutes } from "../load";
-import { getMarkdownFiles } from "./markdown";
+import { getMarkdownFiles } from "../markdown";
+import { loadAssets, loadClientScripts, loadPages, loadRoutes } from "./load";
 import { ServerSchema } from "./server-options";
 const config = await getConfig();
 
@@ -36,8 +36,9 @@ for (const dir of [config.assetsDir, config.pagesDir, config.routesDir]) {
 	}
 }
 
-// markdown plugin
-await getMarkdownFiles();
+if (config.markdown) {
+	await getMarkdownFiles();
+}
 
 const watcher = chokidar.watch(".");
 
