@@ -4,6 +4,10 @@ import matter from "gray-matter";
 import { z } from "zod/v4";
 import { getConfig } from "./config/get-config";
 
+/**
+ * Compile the markdown files from the given path to a json file inside the dev folder.
+ * @returns Promise void
+ */
 export const getMarkdownFiles = async () => {
 	const cong = await getConfig();
 

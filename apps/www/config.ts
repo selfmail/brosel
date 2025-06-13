@@ -2,8 +2,9 @@ import { z } from "zod/v4";
 import config from "./brosel/config";
 
 export default config({
-	tailwind: true,
+	tailwind: false,
 	devDir: ".brosel",
+
 	markdown: {
 		blog: {
 			path: "./src/blog",
@@ -24,5 +25,8 @@ export default config({
 				author: z.string(),
 			},
 		},
+	},
+	secutiry: {
+		runAuditInProduction: false,
 	},
 });
