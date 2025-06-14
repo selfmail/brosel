@@ -6,8 +6,8 @@ import consola from "consola";
 import { z } from "zod/v4";
 import { getConfig } from "../config/get-config";
 import { getMarkdownFiles } from "../markdown";
+import { ServerSchema } from "../server-options";
 import { loadAssets, loadClientScripts, loadPages, loadRoutes } from "./load";
-import { ServerSchema } from "./server-options";
 const config = await getConfig();
 
 if (config.tailwind) {

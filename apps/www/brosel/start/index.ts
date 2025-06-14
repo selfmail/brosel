@@ -3,6 +3,7 @@ import { $ } from "bun";
 import chalk from "chalk";
 import consola from "consola";
 import ora from "ora";
+import { z } from "zod";
 import { getConfig } from "../config/get-config";
 import { getMarkdownFiles } from "../markdown";
 import { compileProductionPages } from "./pages";
@@ -55,9 +56,47 @@ await checkForRequiredDirectories();
 
 spinner.text = "Compiling pages...";
 const pages = await compileProductionPages();
-console.log(pages);
 
 spinner.stop();
+
+const serverConf = await import(`${process.cwd()}/src/index.ts`);
+
+if (!serverConf.default) {
+	consola.error(
+		"The default export in src/index.ts is not a function. It must return the server() function.",
+	);
+	process.exit(1);
+}
+
+const serverConfSchema = await z
+	.object({
+		port: z.number().optional(),
+		hostname: z.string().optional(),
+		routes: z.record(z.string(), z.any()).optional(),
+		error: z.any(),
+	})
+	.safeParseAsync(serverConf.default);
+
+if (!serverConfSchema.success) {
+	console.log(serverConfSchema.error.issues);
+	throw new Error("Failed to parse server options");
+}
+
+const serverOptions = serverConfSchema.data;
+
+const pagesObject = Object.fromEntries(
+	Array.from(pages).map((page) => [page[0], page[1]]),
+);
+
+const server = Bun.serve({
+	port: serverOptions.port ?? 3000,
+	hostname: serverOptions.hostname ?? "localhost",
+	error: serverOptions.error,
+	routes: {
+		...pagesObject,
+		...serverOptions.routes,
+	},
+});
 
 console.log(`
 ${chalk.blue(`Started production server on http://localhost:${process.env.PORT || 3000}`)}

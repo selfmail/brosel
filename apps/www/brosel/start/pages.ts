@@ -2,6 +2,7 @@ import { rm } from "node:fs/promises";
 import { createId } from "@paralleldrive/cuid2";
 import type { BunRequest } from "bun";
 import consola from "consola";
+import { z } from "zod";
 import { getConfig } from "../config/get-config";
 import { hydrationTemplate } from "../templates";
 
@@ -18,7 +19,7 @@ export async function compileProductionPages() {
 		force: true,
 	});
 
-	const pages = new Map<string, (req: BunRequest) => Promise<string>>();
+	const pages = new Map<string, (req: BunRequest) => Promise<Response>>();
 
 	const files = new Bun.Glob(`${process.cwd()}/${config.pagesDir}/**/*.tsx`);
 
@@ -40,7 +41,7 @@ export async function compileProductionPages() {
 
 		const id = createId();
 
-		globalThis.scriptPath.path = `/scripts/${id}.js`;
+		globalThis.scriptPath[path] = `/scripts/${id}.js`;
 
 		await Bun.write(
 			`${process.cwd()}/${config.devDir}/static/${id}.tsx`,
@@ -53,9 +54,32 @@ export async function compileProductionPages() {
 			minify: true,
 			target: "browser",
 		});
-	}
 
-	console.log(globalThis.scriptPath);
+		const serverPage = await import(file);
+		if (!serverPage.default) {
+			throw new Error(
+				`Server function not found for route: ${path}. You have to export a default function which returns a "render()" function.`,
+			);
+		}
+
+		const parse = await z
+			.object({
+				path: z.string().optional(),
+				handler: z.function().args(z.instanceof(Request)).returns(z.any()),
+			})
+			.safeParseAsync(await serverPage.default);
+
+		if (!parse.success) {
+			console.log(parse.error.issues);
+			throw new Error("Failed to parse route");
+		}
+
+		const handler = parse.data.handler as (
+			req: BunRequest<string>,
+		) => Promise<Response>;
+
+		pages.set(parse.data.path ?? path, handler);
+	}
 
 	return pages;
 }
