@@ -8,6 +8,8 @@ import { getMarkdownFiles } from "../markdown";
 import { compileProductionPages } from "./pages";
 import { checkForRequiredDirectories } from "./utils";
 
+globalThis.scriptPath = {};
+
 const config = await getConfig();
 
 const spinner = ora("Deleting old cache files...").start();
@@ -34,7 +36,10 @@ if (config.secutiry.runAuditInProduction) {
 if (config.tailwind) {
 	spinner.text = "Compiling TailwindCSS...";
 	const code =
-		await $`bunx @tailwindcss/cli -i ${process.cwd()}/${config.globalCSS} -o ${process.cwd()}/.brosel/out.css`;
+		await $`bunx @tailwindcss/cli -i ${process.cwd()}/${config.globalCSS} -o ${process.cwd()}/.brosel/out.css`
+			.nothrow()
+			.quiet();
+
 	if (code.exitCode !== 0) {
 		console.error("TailwindCSS failed to compile.");
 		process.exit(1);
@@ -50,6 +55,7 @@ await checkForRequiredDirectories();
 
 spinner.text = "Compiling pages...";
 const pages = await compileProductionPages();
+console.log(pages);
 
 spinner.stop();
 

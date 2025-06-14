@@ -9,6 +9,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
+		"@paralleldrive/cuid2": "^2.2.2",
 		"@types/bun": "^1.2.15",
 		"@types/react": "^19.1.6",
 		"@types/react-dom": "^19.1.6"

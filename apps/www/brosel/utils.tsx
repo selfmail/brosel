@@ -7,6 +7,7 @@ import type { BunRequest } from "bun";
 import type { JSX } from "react";
 import { renderToReadableStream } from "react-dom/server";
 import type { HttpMethod } from "./load-routes";
+import { getClientScriptRoute } from "./script";
 
 export type LoadConfig<T extends string> = {
 	/**
@@ -46,7 +47,10 @@ export type LoadConfig<T extends string> = {
  * })
  * ```
  */
-export const load = <T extends string>({ path, handler }: LoadConfig<T>) => {
+export const load = async <T extends string>({
+	path,
+	handler,
+}: LoadConfig<T>) => {
 	return {
 		path,
 		handler,
