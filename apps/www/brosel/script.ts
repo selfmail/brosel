@@ -28,11 +28,13 @@ export async function getClientScriptRoute(path: string) {
 
 	const route = path
 		.replace(`${process.cwd()}/${config.pagesDir}`, "")
-		.replace(".tsx", "");
+		.replace(".tsx", "")
+		.replace("index", "");
 
-	const scriptPath: string | undefined = globalThis.dev
-		? route
-		: globalThis.scriptPath[route];
+	const scriptPath: string | undefined =
+		globalThis.dev === true ? route : globalThis.scriptPath[route];
+
+	console.log(scriptPath);
 
 	if (!scriptPath) {
 		throw new Error(

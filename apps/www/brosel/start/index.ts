@@ -6,10 +6,14 @@ import ora from "ora";
 import { z } from "zod";
 import { getConfig } from "../config/get-config";
 import { getMarkdownFiles } from "../markdown";
-import { compileProductionPages } from "./pages";
+import { loadProductionAssets } from "./assets";
+import { loadProductionPages } from "./pages";
+import { loadProductionRoutes } from "./routes";
+import { loadProductionClientScripts } from "./scripts";
 import { checkForRequiredDirectories } from "./utils";
 
 globalThis.scriptPath = {};
+globalThis.dev = false;
 
 const config = await getConfig();
 
@@ -54,8 +58,12 @@ if (config.markdown) {
 spinner.text = "Checking for required directories...";
 await checkForRequiredDirectories();
 
-spinner.text = "Compiling pages...";
-const pages = await compileProductionPages();
+spinner.text = "Compiling routes...";
+
+const pagesObject = await loadProductionPages();
+const scriptsObject = await loadProductionClientScripts();
+const routesObject = await loadProductionRoutes();
+const assetsObject = await loadProductionAssets();
 
 spinner.stop();
 
@@ -84,16 +92,17 @@ if (!serverConfSchema.success) {
 
 const serverOptions = serverConfSchema.data;
 
-const pagesObject = Object.fromEntries(
-	Array.from(pages).map((page) => [page[0], page[1]]),
-);
-
 const server = Bun.serve({
 	port: serverOptions.port ?? 3000,
-	hostname: serverOptions.hostname ?? "localhost",
-	error: serverOptions.error,
+	hostname: serverOptions.hostname ?? "0.0.0.0",
+	error: (err) => {
+		return new Response(err.message);
+	},
 	routes: {
 		...pagesObject,
+		...scriptsObject,
+		...routesObject,
+		...assetsObject,
 		...serverOptions.routes,
 	},
 });

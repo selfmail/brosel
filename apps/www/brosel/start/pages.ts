@@ -10,7 +10,7 @@ import { hydrationTemplate } from "../templates";
  * The creation of the pages in harder in the production server. We need to encrypt the
  * name of the script file, and we need to add important Headers to the Page.
  */
-export async function compileProductionPages() {
+export async function loadProductionPages() {
 	const config = await getConfig();
 
 	// create new static dir for production
@@ -81,5 +81,9 @@ export async function compileProductionPages() {
 		pages.set(parse.data.path ?? path, handler);
 	}
 
-	return pages;
+	const pagesObject = Object.fromEntries(
+		Array.from(pages).map((page) => [page[0], page[1]]),
+	);
+
+	return pagesObject;
 }

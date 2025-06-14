@@ -4,13 +4,13 @@ interface RootLayoutProps extends React.HTMLAttributes<HTMLBodyElement> {
 		description: string;
 	};
 	props: Record<string, unknown>;
-	path: string;
+	script: string;
 }
 
 export default function RootLayout({
 	metadata,
 	props,
-	path,
+	script,
 	...bodyProps
 }: RootLayoutProps) {
 	return (
@@ -28,9 +28,7 @@ export default function RootLayout({
 						__html: `window.__INITIAL_PROPS__ = ${JSON.stringify(props)}`,
 					}}
 				/>
-				<script
-					src={`/scripts/client${path === "" ? "" : `-${path}`}.js`}
-				></script>
+				<script src={script} />
 			</body>
 		</html>
 	);

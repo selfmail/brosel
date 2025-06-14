@@ -3,7 +3,7 @@ import Footer from "../components/footer";
 import Header from "../components/header";
 import RootLayout from "../layouts/root";
 
-export default function Component() {
+export default function Component({ script }: { script: string }) {
 	return (
 		<RootLayout
 			metadata={{
@@ -11,8 +11,8 @@ export default function Component() {
 				description:
 					"Brösel is a minimal fullstack framework for building web applications with React and Bun.",
 			}}
-			props={{}}
-			path=""
+			props={{ script }}
+			script={script}
 			className="flex justify-center w-full min-h-screen"
 		>
 			<div className="lg:w-[600px] lg:pt-24 flex flex-col space-y-12">
