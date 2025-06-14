@@ -32,12 +32,16 @@ export async function loadProductionPages() {
 		if (!client) continue;
 
 		// get the path of the page
-		const path = file
+		let path = file
 			.replace(".tsx", "")
 			.split(config.pagesDir)[1]
 			?.replace("index", "");
 
 		if (!path) continue;
+
+		if (path.endsWith("/") && path !== "/") {
+			path = path.slice(0, -1);
+		}
 
 		const id = createId();
 

@@ -4,6 +4,7 @@ import RootLayout from "../../layouts/root";
 
 export default function AllBlogPostsClient({
 	blogPosts,
+	script,
 }: {
 	blogPosts: {
 		meta: {
@@ -20,6 +21,7 @@ export default function AllBlogPostsClient({
 		};
 		content: string;
 	}[];
+	script: string;
 }) {
 	return (
 		<RootLayout
@@ -28,8 +30,8 @@ export default function AllBlogPostsClient({
 				description:
 					"Brösel is a minimal fullstack framework for building web applications with React and Bun.",
 			}}
-			props={{ blogPosts }}
-			path="blog"
+			props={{ blogPosts, script }}
+			script={script}
 			className="flex items-center justify-center"
 		>
 			<div className="lg:w-[600px] lg:pt-24 flex flex-col space-y-12">

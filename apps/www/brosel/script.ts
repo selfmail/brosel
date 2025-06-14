@@ -24,17 +24,17 @@ import { getConfig } from "./config/get-config";
 export async function getClientScriptRoute(path: string) {
 	const config = await getConfig();
 
-	console.log(path);
-
-	const route = path
+	let route = path
 		.replace(`${process.cwd()}/${config.pagesDir}`, "")
 		.replace(".tsx", "")
 		.replace("index", "");
 
+	if (route.endsWith("/") && route !== "/") {
+		route = route.slice(0, -1);
+	}
+
 	const scriptPath: string | undefined =
 		globalThis.dev === true ? route : globalThis.scriptPath[route];
-
-	console.log(scriptPath);
 
 	if (!scriptPath) {
 		throw new Error(
