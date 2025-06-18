@@ -1,13 +1,14 @@
 import { exists } from "node:fs/promises";
 import { $, serve } from "bun";
 import chalk from "chalk";
-import chokidar from "chokidar";
+
 import consola from "consola";
 import { z } from "zod/v4";
 import { getConfig } from "../config/get-config";
 import { getMarkdownFiles } from "../markdown";
 import { ServerSchema } from "../server-options";
 import { loadAssets, loadClientScripts, loadPages, loadRoutes } from "./load";
+import { watcher } from "./watch";
 const config = await getConfig();
 
 if (config.tailwind) {
@@ -40,29 +41,12 @@ if (config.markdown) {
 	await getMarkdownFiles();
 }
 
-const watcher = chokidar.watch(".");
-
 /**
  * An implementation of a "watcher". This watcher checks for updates in the root directory and
  * restarts the server if there are any changes. It's also responsible for removing the client
  * side code in the `.brosel` folder.
  */
-watcher.on("all", async (path, stats) => {
-	if (config.markdown) {
-		for (const [_, value] of Object.entries(config.markdown)) {
-			if (path.includes(value.path.replace("./", ""))) {
-				await getMarkdownFiles();
-			}
-		}
-	}
-
-	// handling routing changes
-	if (path.endsWith(".tsx") && path.includes("src/pages")) {
-		if (path.endsWith(".client.tsx")) {
-			// change in the client file
-		}
-	}
-});
+await watcher();
 
 // set global dev variable for hot reloading in the website
 globalThis.dev = true;

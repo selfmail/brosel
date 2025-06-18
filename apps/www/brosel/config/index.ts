@@ -19,6 +19,12 @@ export const ConfigSchema = z.object({
 
 	port: z.number(),
 
+	routes: z.object({
+		assetsPath: z.string(),
+		routesPath: z.string().optional(),
+		scriptPath: z.string(),
+	}),
+
 	// plugins
 	markdown: z
 		.record(
@@ -30,9 +36,11 @@ export const ConfigSchema = z.object({
 			}),
 		)
 		.optional(),
+
+	env: z.object(z.record(z.string(), z.any())),
 });
 
-export type Config = Omit<z.infer<typeof ConfigSchema>, "markdown"> & {
+export type Config = Omit<z.infer<typeof ConfigSchema>, "markdown" | "env"> & {
 	markdown?: Record<
 		string,
 		{
@@ -41,6 +49,7 @@ export type Config = Omit<z.infer<typeof ConfigSchema>, "markdown"> & {
 			frontmatter: Record<string, z.ZodType>;
 		}
 	>;
+	env: Record<string, z.ZodType>;
 };
 
 export default function config({
@@ -51,14 +60,23 @@ export default function config({
 	globalCSS = "src/global.css",
 	routesDir = "src/routes",
 	port = 3000,
+	routes = {
+		assetsPath: "/assets",
+		scriptPath: "/scripts",
+	},
 	markdown,
 	secutiry = {
 		runAuditInProduction: true,
+	},
+	env = {
+		NODE_ENV: z.string(),
 	},
 }: Partial<Config>): Config {
 	return {
 		tailwind,
 		assetsDir,
+		routes,
+		env,
 		pagesDir,
 		globalCSS,
 		devDir,
