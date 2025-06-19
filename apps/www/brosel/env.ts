@@ -46,17 +46,23 @@ export async function checkEnv() {
 		return `  ${key}${optional ? "?" : ""}: ${zodToTsType(schema)};`;
 	});
 
-	const content = `export {};
+	// FIXME: if you want to edit the global.d.ts file, you need to edit this content string!
+	const content = `// IF YOU WANT TO EDIT THIS FILE, YOU NEED TO EDIT \`content\`-VARIABLE THE \`/brosel/env.ts\` FILE!
+export {};
 
 declare global {
-	namespace NodeJS {
-		var process: NodeJS.Process & {	
-		  ${fields.join("\n          ")}
+	var dev: boolean;
+	var server: Bun.ServeFunction<unknown, object> | undefined;
+	var scriptPath: Record<string, string>;
+
+	var process: Omit<NodeJS.Process, "env"> & {
+		env: {
+	      ${fields.join("\n          ")}
 		};
-	}
+	};
 }
 `;
 
-	const outputPath = `${process.cwd()}/${config.devDir}/env.d.ts`;
+	const outputPath = `${process.cwd()}/global.d.ts`;
 	await Bun.write(outputPath, content);
 }

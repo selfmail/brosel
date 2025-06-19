@@ -88,7 +88,6 @@ const server = serve({
 });
 
 globalThis.server = server;
-
 console.log(
 	`\n${chalk.greenBright(`Server running on http://${server.hostname}:${server.port} in dev-mode.`)}`,
 	`\n${chalk.grey(`Press ${chalk.cyanBright("CTRL + C")} to stop the server.`)}\n`,

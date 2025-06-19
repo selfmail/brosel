@@ -6,7 +6,7 @@ export default config({
 	devDir: ".brosel",
 
 	env: {
-		HEY: z.string(),
+		HACKCLUB: z.string(),
 	},
 
 	markdown: {
