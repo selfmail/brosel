@@ -4,6 +4,7 @@ import chalk from "chalk";
 
 import consola from "consola";
 import { z } from "zod/v4";
+import { generateRoutePath } from "../action";
 import { getConfig } from "../config/get-config";
 import { checkEnv } from "../env";
 import { getMarkdownFiles } from "../markdown";
@@ -45,6 +46,8 @@ if (config.markdown) {
 
 // parse env variables
 await checkEnv();
+
+await generateRoutePath();
 
 /**
  * An implementation of a "watcher". This watcher checks for updates in the root directory and
@@ -88,6 +91,7 @@ const server = serve({
 });
 
 globalThis.server = server;
+
 console.log(
 	`\n${chalk.greenBright(`Server running on http://${server.hostname}:${server.port} in dev-mode.`)}`,
 	`\n${chalk.grey(`Press ${chalk.cyanBright("CTRL + C")} to stop the server.`)}\n`,

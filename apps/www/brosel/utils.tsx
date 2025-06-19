@@ -4,10 +4,9 @@ functions that are used to render a page or route on the server.
 */
 
 import type { BunRequest } from "bun";
-import type { JSX } from "react";
 import { renderToReadableStream } from "react-dom/server";
-import type { HttpMethod } from "./load-routes";
-import { getClientScriptRoute } from "./script";
+
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
 export type LoadConfig<T extends string> = {
 	/**
