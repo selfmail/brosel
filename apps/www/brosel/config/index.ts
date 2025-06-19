@@ -37,7 +37,7 @@ export const ConfigSchema = z.object({
 		)
 		.optional(),
 
-	env: z.object(z.record(z.string(), z.any())),
+	env: z.record(z.string(), z.any()),
 });
 
 export type Config = Omit<z.infer<typeof ConfigSchema>, "markdown" | "env"> & {
@@ -69,7 +69,7 @@ export default function config({
 		runAuditInProduction: true,
 	},
 	env = {
-		NODE_ENV: z.string(),
+		NODE_ENV: z.enum(["development", "production"]).optional(),
 	},
 }: Partial<Config>): Config {
 	return {

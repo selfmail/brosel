@@ -9,11 +9,18 @@ import { getConfig } from "./config/get-config";
  * @returns Promise void
  */
 export const getMarkdownFiles = async () => {
-	const cong = await getConfig();
+	const conf = await getConfig();
 
-	if (!cong.markdown) return;
+	if (!conf.markdown) return;
 
-	for await (const [path, config] of Object.entries(cong.markdown)) {
+	for await (const [path, config] of Object.entries(conf.markdown) as [
+		string,
+		{
+			path: string;
+			extension: string;
+			frontmatter: Record<string, z.ZodType>;
+		},
+	][]) {
 		if (!(await exists(`${process.cwd()}/${config.path}`))) {
 			console.error(`Directory ${config.path} not found. Please create it.`);
 			process.exit(1);

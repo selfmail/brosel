@@ -12,6 +12,7 @@ export async function getConfig() {
 	}
 
 	const parse = await ConfigSchema.safeParseAsync(config.default);
+
 	if (!parse.success) {
 		const prettyError = z.prettifyError(parse.error);
 		consola.error(`Config Error: ${prettyError}`);

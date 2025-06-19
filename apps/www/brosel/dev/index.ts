@@ -5,10 +5,12 @@ import chalk from "chalk";
 import consola from "consola";
 import { z } from "zod/v4";
 import { getConfig } from "../config/get-config";
+import { checkEnv } from "../env";
 import { getMarkdownFiles } from "../markdown";
 import { ServerSchema } from "../server-options";
 import { loadAssets, loadClientScripts, loadPages, loadRoutes } from "./load";
 import { watcher } from "./watch";
+
 const config = await getConfig();
 
 if (config.tailwind) {
@@ -40,6 +42,9 @@ for (const dir of [config.assetsDir, config.pagesDir, config.routesDir]) {
 if (config.markdown) {
 	await getMarkdownFiles();
 }
+
+// parse env variables
+await checkEnv();
 
 /**
  * An implementation of a "watcher". This watcher checks for updates in the root directory and

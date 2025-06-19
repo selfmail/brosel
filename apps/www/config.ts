@@ -5,6 +5,10 @@ export default config({
 	tailwind: true,
 	devDir: ".brosel",
 
+	env: {
+		HEY: z.string(),
+	},
+
 	markdown: {
 		blog: {
 			path: "./src/blog",
