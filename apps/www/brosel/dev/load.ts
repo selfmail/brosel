@@ -4,7 +4,7 @@
  */
 
 import { readdir } from "node:fs/promises";
-import { $, type BunRequest } from "bun";
+import type { BunRequest } from "bun";
 import { z } from "zod";
 import { getConfig } from "../config/get-config";
 import { hydrationTemplate } from "../templates";

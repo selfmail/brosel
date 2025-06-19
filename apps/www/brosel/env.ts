@@ -1,5 +1,3 @@
-import { $ } from "bun";
-import consola from "consola";
 import { z } from "zod/v4";
 import { getConfig } from "./config/get-config";
 
@@ -33,8 +31,6 @@ export async function checkEnv() {
 		console.error("Environment variable validation failed:", parse.error);
 		process.exit(1);
 	}
-
-	consola.info("Environment variables validated successfully.");
 
 	const fields = Object.entries(schema.shape).map(([key, zodSchema]) => {
 		const schema = zodSchema as z.ZodTypeAny;

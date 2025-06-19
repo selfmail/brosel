@@ -5,6 +5,7 @@ import consola from "consola";
 import ora from "ora";
 import { z } from "zod";
 import { getConfig } from "../config/get-config";
+import { checkEnv } from "../env";
 import { getMarkdownFiles } from "../markdown";
 import { loadProductionAssets } from "./assets";
 import { loadProductionPages } from "./pages";
@@ -54,6 +55,9 @@ if (config.tailwind) {
 if (config.markdown) {
 	await getMarkdownFiles();
 }
+
+spinner.text = "Checking env variables...";
+await checkEnv();
 
 spinner.text = "Checking for required directories...";
 await checkForRequiredDirectories();
@@ -108,6 +112,6 @@ const server = Bun.serve({
 });
 
 console.log(`
-${chalk.blue(`Started production server on http://localhost:${process.env.PORT || 3000}`)}
+${chalk.blue(`Started production server on http://localhost:${server.port || 3000}`)}
 ${chalk.grey("The production server is not recommended for development.")}    
 `);

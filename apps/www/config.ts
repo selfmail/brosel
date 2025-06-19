@@ -5,9 +5,7 @@ export default config({
 	tailwind: true,
 	devDir: ".brosel",
 
-	env: {
-		HACKCLUB: z.string(),
-	},
+	env: {},
 
 	markdown: {
 		blog: {

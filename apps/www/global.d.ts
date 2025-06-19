@@ -10,7 +10,6 @@ declare global {
 		env: {
 	        NODE_ENV?: "development" | "production" | undefined;
             TZ?: string | undefined;
-            HACKCLUB: string;
 		};
 	};
 }

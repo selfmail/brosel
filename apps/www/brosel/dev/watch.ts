@@ -1,4 +1,5 @@
 import { watch } from "node:fs";
+import consola from "consola";
 import { getConfig } from "../config/get-config";
 
 /**
@@ -14,14 +15,15 @@ export const watcher = async () => {
 	const pagesDir = config.pagesDir;
 
 	// listening for changes in the assets directory
-	const assetsWatcher = watch(`${rootPath}/${assetsDir}`, (event, filename) => {
+	const watcher = watch(`${rootPath}`, (event, filename) => {
 		console.log(`Detected ${event} in ${filename}`);
 	});
 
 	process.on("SIGINT", () => {
 		// close watcher when Ctrl-C is pressed
-		console.log("Closing watcher...");
-		assetsWatcher.close();
+		console.log("\n\n");
+		consola.info("Closing watcher...");
+		watcher.close();
 
 		process.exit(0);
 	});
