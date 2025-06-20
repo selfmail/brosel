@@ -3,7 +3,8 @@ import { getConfig } from "../config/get-config";
 export async function loadAssets() {
 	const config = await getConfig();
 	const assets = new Bun.Glob(`${process.cwd()}/${config.assetsDir}/**/*`);
-	const files: { path: string; handler: () => Response }[] = [];
+	const files: { path: string; handler: () => Response | Promise<Response> }[] =
+		[];
 	for await (const file of assets.scan()) {
 		files.push({
 			path: file.replace(`${process.cwd()}/${config.assetsDir}/`, "/assets/"),
@@ -17,9 +18,19 @@ export async function loadAssets() {
 		files.map((file) => [file.path, file.handler]),
 	);
 
-	assetsObject["/assets/styles.css"] = () => {
-		return new Response(Bun.file("./.brosel/out.css"));
+	assetsObject["/assets/styles.css"] = async () => {
+		return new Response(
+			await Bun.file(`${process.cwd()}/${config.devDir}/out.css`).text(),
+			{
+				headers: {
+					"Content-Type": "text/css",
+				},
+			},
+		);
 	};
+
+	console.log("Assets loaded:", Object.keys(assetsObject).length);
+	console.log(assetsObject);
 
 	return assetsObject;
 }

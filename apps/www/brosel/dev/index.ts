@@ -18,21 +18,16 @@ import { watcher } from "./watch";
 const config = await getConfig();
 
 if (config.tailwind) {
-	Bun.spawn(
-		[
-			"bunx",
-			"@tailwindcss/cli",
-			"-i",
-			`${process.cwd()}/${config.globalCSS}`,
-			"-o",
-			`${process.cwd()}/.brosel/out.css`,
-			"--watch",
-		],
-		{
-			stdout: "ignore",
-			stderr: "ignore",
-		},
-	);
+	const tailwind =
+		await $`bunx @tailwindcss/cli -i ./${config.globalCSS} -o ./${config.devDir}/out.css`
+			.quiet()
+			.nothrow();
+	if (tailwind.exitCode !== 0) {
+		consola.error(
+			`Tailwind CLI failed to run. Please check your Tailwind configuration. Error: ${tailwind.stderr}`,
+		);
+		process.exit(1);
+	}
 }
 
 // check for required directories

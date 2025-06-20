@@ -1,5 +1,5 @@
-import { exists } from "node:fs/promises";
-import type { BunRequest } from "bun";
+import { exists, rm } from "node:fs/promises";
+import { $, type BunRequest } from "bun";
 import chalk from "chalk";
 import consola from "consola";
 import { z } from "zod/v4";
@@ -26,6 +26,24 @@ export async function restart() {
 
 	// the following code is a copy of the code in `/brosel/dev/index.ts` file
 	const config = await getConfig();
+
+	await rm(`${process.cwd()}/${config.devDir}`, {
+		recursive: true,
+		force: true,
+	});
+
+	if (config.tailwind) {
+		const tailwind =
+			await $`bunx @tailwindcss/cli -i ./${config.globalCSS} -o ./${config.devDir}/out.css`
+				.quiet()
+				.nothrow();
+		if (tailwind.exitCode !== 0) {
+			consola.error(
+				`Tailwind CLI failed to run. Please check your Tailwind configuration. Error: ${tailwind.stderr}`,
+			);
+			process.exit(1);
+		}
+	}
 
 	// check for required directories
 	for (const dir of [config.assetsDir, config.pagesDir, config.routesDir]) {
@@ -107,7 +125,7 @@ export async function restart() {
 	const end = performance.now();
 	const time = (end - startTime).toFixed(2);
 
-	console.clear();
+	//console.clear();
 	console.log(
 		`\n${chalk.greenBright(`Server running on http://${server.hostname}:${server.port} in dev-mode.`)}`,
 		`\n${chalk.grey(`Press ${chalk.cyanBright("CTRL + C")} to stop the server. It took ${time}ms to restart server.`)}\n`,

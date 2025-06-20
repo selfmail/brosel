@@ -2,11 +2,6 @@ import { z } from "zod/v4";
 import config from "./brosel/config";
 
 export default config({
-	tailwind: true,
-	devDir: ".brosel",
-
-	env: {},
-
 	markdown: {
 		blog: {
 			path: "src/blog",
