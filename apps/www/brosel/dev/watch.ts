@@ -8,68 +8,29 @@ import { restart } from "./restart";
  */
 export const watcher = async () => {
 	const config = await getConfig();
-
-	const rootPath = process.cwd();
-
-	const assetsDir = config.assetsDir;
-	const routesDir = config.routesDir;
-	const pagesDir = config.pagesDir;
-	const markdownDir: string[] = [];
-	const broselDir = "brosel";
-
-	if (config.markdown) {
-		for (const dir of Object.values(config.markdown)) {
-			console.log(dir.path);
-			const markdownPath = `${rootPath}/${dir.path}`;
-			markdownDir.push(markdownPath);
-		}
-	}
-
-	const watchPaths = [
-		assetsDir,
-		routesDir,
-		broselDir,
-		pagesDir,
-		...markdownDir,
-	];
-
-	consola.info(watchPaths);
-
-	// Helper to determine which directory the file belongs to
-	const getDirType = (filePath: string) => {
-		if (filePath.startsWith(assetsDir)) return "assets";
-		if (filePath.startsWith(routesDir)) return "routes";
-		if (filePath.startsWith(pagesDir)) return "pages";
-		for (const dir of markdownDir) {
-			if (filePath.startsWith(dir)) return "markdown";
-		}
-		if (filePath.startsWith(broselDir)) return "brosel";
-		return "unknown";
-	};
-
-	const watcher = chokidar.watch(watchPaths, {
+	const watcher = chokidar.watch(".", {
 		persistent: true,
 		ignoreInitial: true,
+		ignored: (path: string, stats?: import("fs").Stats): boolean => {
+			if (stats?.isDirectory()) {
+				return path.includes("node_modules") || path.includes(config.devDir);
+			}
+			return false;
+		},
 	});
 
 	watcher
 		.on("add", async (path) => {
-			const dirType = getDirType(path);
-			consola.info(`[${dirType}] File added: ${path}`);
-			if (dirType === "brosel") {
-				consola.info("Brosel directory detected, reloading...");
-				await restart();
-			}
+			consola.info(`File added: ${path}`);
+			await restart();
 		})
-		.on("change", (path) => {
-			const dirType = getDirType(path);
-			consola.info(`[${dirType}] File changed: ${path}`);
-			// Implement your logic here for file change
+		.on("change", async (path) => {
+			consola.info(`File changed: ${path}`);
+			await restart();
 		})
-		.on("unlink", (path) => {
-			const dirType = getDirType(path);
-			consola.info(`[${dirType}] File removed: ${path}`);
-			// Implement your logic here for file removal
+		.on("unlink", async (path) => {
+			consola.info(`File removed: ${path}`);
+			await restart();
 		});
 
 	process.on("SIGINT", () => {

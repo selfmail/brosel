@@ -1,5 +1,5 @@
 import { exists } from "node:fs/promises";
-import { $, serve } from "bun";
+import { $, type BunRequest, serve } from "bun";
 import chalk from "chalk";
 
 import consola from "consola";
@@ -9,7 +9,10 @@ import { getConfig } from "../config/get-config";
 import { checkEnv } from "../env";
 import { getMarkdownFiles } from "../markdown";
 import { ServerSchema } from "../server-options";
-import { loadAssets, loadClientScripts, loadPages, loadRoutes } from "./load";
+import { loadAssets } from "./assets";
+import { loadPages } from "./pages";
+import { loadRoutes } from "./routes";
+import { loadClientScripts } from "./scripts";
 import { watcher } from "./watch";
 
 const config = await getConfig();
@@ -75,25 +78,44 @@ if (!parse.success) {
 	process.exit(1);
 }
 
-const assets = await loadAssets();
-const routes = await loadRoutes();
-const pages = await loadPages();
-const scripts = await loadClientScripts();
+const routes = new Map<
+	string,
+	(req: BunRequest) => Response | Promise<Response>
+>();
+
+const routesObject = await loadRoutes();
+const pagesObject = await loadPages();
+const assetsObject = await loadAssets();
+const scriptsObject = await loadClientScripts();
+const pathObject = {
+	...routesObject,
+	...pagesObject,
+	...scriptsObject,
+	...assetsObject,
+};
+
+for (const [path, handler] of Object.entries(pathObject)) {
+	if (typeof handler !== "function") {
+		consola.error(`Handler for path ${path} is not a function.`);
+		continue;
+	}
+	if (routes.has(path)) {
+		consola.warn(`Path ${path} is already registered. Overwriting.`);
+	}
+	routes.set(path, handler);
+}
 
 const server = serve({
 	...(parse.data as Bun.ServeFunctionOptions<unknown, object>),
 	routes: {
-		...routes,
-		...assets,
-		...pages,
-		...scripts,
+		...Object.fromEntries(routes),
 	},
 });
 
 globalThis.server = server;
 
-// console.clear();
+console.clear();
 console.log(
-	`\n${chalk.greenBright(`Server running on http://${server.hostname}:${server.port} in dev-mode.`)}`,
+	`\n${chalk.greenBright(`Server restarted. Listening on http://${server.hostname}:${server.port} in dev-mode.`)}`,
 	`\n${chalk.grey(`Press ${chalk.cyanBright("CTRL + C")} to stop the server.`)}\n`,
 );
