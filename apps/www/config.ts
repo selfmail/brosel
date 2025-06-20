@@ -9,7 +9,7 @@ export default config({
 
 	markdown: {
 		blog: {
-			path: "./src/blog",
+			path: "src/blog",
 			extension: "md",
 			frontmatter: {
 				title: z.string(),
@@ -19,7 +19,7 @@ export default config({
 			},
 		},
 		docs: {
-			path: "./src/docs",
+			path: "src/docs",
 			extension: "md",
 			frontmatter: {
 				title: z.string(),

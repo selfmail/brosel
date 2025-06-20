@@ -70,13 +70,17 @@ export const getMarkdownFiles = async () => {
 
 		const text = JSON.stringify(Array.from(mdFiles), null, 2);
 
-		await Bun.write(`${process.cwd()}/.brosel/markdown/${path}.json`, text);
+		await Bun.write(
+			`${process.cwd()}/${conf.devDir}/markdown/${path}.json`,
+			text,
+		);
 	}
 };
 
 export const loadMarkdownFiles = async (markdownCollection: string) => {
+	const config = await getConfig();
 	const files = await Bun.file(
-		`${process.cwd()}/.brosel/markdown/${markdownCollection}.json`,
+		`${process.cwd()}/${config.devDir}/markdown/${markdownCollection}.json`,
 	).text();
 	const rawFiles = JSON.parse(files) as {
 		meta: {

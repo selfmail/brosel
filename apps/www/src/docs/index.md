@@ -12,3 +12,4 @@ Brösel is a minimal fullstack framework for building web applications with Reac
 
 As we all know, there are many frameworks out there. Some of them are great, some are not. Brösel is different. It's not a framework for everyone, it's a framework for you. You can customize it, add features, fix small bugs, make it your own. Brösel is a minimal framework, it's not overcomplicated.
 
+## Why
