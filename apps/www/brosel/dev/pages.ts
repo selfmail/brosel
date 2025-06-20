@@ -1,4 +1,5 @@
 import { rm } from "node:fs/promises";
+import { createId } from "@paralleldrive/cuid2";
 import type { BunRequest } from "bun";
 import { z } from "zod";
 import { getConfig } from "../config/get-config";
@@ -12,6 +13,8 @@ export async function loadPages() {
 		recursive: true,
 		force: true,
 	});
+
+	globalThis.scriptPath = globalThis.scriptPath || {};
 
 	const pages = new Map<string, (req: BunRequest) => Promise<Response>>();
 
@@ -56,15 +59,17 @@ export async function loadPages() {
 			throw new Error("Failed to parse route");
 		}
 
+		const id = createId();
+
+		globalThis.scriptPath[path] = `/scripts/${id}.js`;
+
 		await Bun.write(
-			`${process.cwd()}/${config.devDir}/static/${parse.data.path ?? path}.tsx`,
+			`${process.cwd()}/${config.devDir}/static/${id}.tsx`,
 			hydrationTemplate(file.replace(".tsx", ".client.tsx")),
 		);
 
 		await Bun.build({
-			entrypoints: [
-				`${process.cwd()}/${config.devDir}/static/${parse.data.path ?? path}.tsx`,
-			],
+			entrypoints: [`${process.cwd()}/${config.devDir}/static/${id}.tsx`],
 			outdir: `${process.cwd()}/${config.devDir}/client-scripts`,
 			minify: true,
 			target: "browser",

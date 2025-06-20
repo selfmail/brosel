@@ -88,7 +88,6 @@ const pagesObject = await loadPages();
 const assetsObject = await loadAssets();
 const scriptsObject = await loadClientScripts();
 const pathObject = {
-	...routesObject,
 	...pagesObject,
 	...scriptsObject,
 	...assetsObject,
@@ -105,17 +104,28 @@ for (const [path, handler] of Object.entries(pathObject)) {
 	routes.set(path, handler);
 }
 
+for (const [path, handler] of Object.entries(routesObject)) {
+	if (typeof handler !== typeof {}) {
+		consola.warn(`Handler for route ${path} is not an object.`);
+		continue;
+	}
+	if (routes.has(path)) {
+		consola.warn(`Route ${path} is already registered. Overwriting.`);
+	}
+}
+
 const server = serve({
 	...(parse.data as Bun.ServeFunctionOptions<unknown, object>),
 	routes: {
 		...Object.fromEntries(routes),
+		...routesObject,
 	},
 });
 
 globalThis.server = server;
 
-console.clear();
+//console.clear();
 console.log(
-	`\n${chalk.greenBright(`Server restarted. Listening on http://${server.hostname}:${server.port} in dev-mode.`)}`,
+	`\n${chalk.greenBright(`Server listening on http://${server.hostname}:${server.port} in dev-mode.`)}`,
 	`\n${chalk.grey(`Press ${chalk.cyanBright("CTRL + C")} to stop the server.`)}\n`,
 );

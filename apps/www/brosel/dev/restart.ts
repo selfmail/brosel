@@ -71,14 +71,12 @@ export async function restart() {
 	const assetsObject = await loadAssets();
 	const scriptsObject = await loadClientScripts();
 	const pathObject = {
-		...routesObject,
 		...pagesObject,
 		...scriptsObject,
 		...assetsObject,
 	};
 
-	console.log(pathObject);
-
+	// checking the path of assets, pages and scripts
 	for (const [path, handler] of Object.entries(pathObject)) {
 		if (typeof handler !== "function") {
 			consola.error(`Handler for path ${path} is not a function.`);
@@ -90,20 +88,43 @@ export async function restart() {
 		routes.set(path, handler);
 	}
 
+	for (const [path, handler] of Object.entries(routesObject)) {
+		if (typeof handler !== typeof {}) {
+			consola.error(`Handler for route ${path} is not an object.`);
+			return;
+		}
+	}
+
 	const server = globalThis.server;
 
 	server.reload({
 		routes: {
 			...Object.fromEntries(routes),
+			...routesObject,
 		},
 	});
 
 	const end = performance.now();
 	const time = (end - startTime).toFixed(2);
 
-	// console.clear();
+	console.clear();
 	console.log(
 		`\n${chalk.greenBright(`Server running on http://${server.hostname}:${server.port} in dev-mode.`)}`,
 		`\n${chalk.grey(`Press ${chalk.cyanBright("CTRL + C")} to stop the server. It took ${time}ms to restart server.`)}\n`,
 	);
+}
+
+let restartTimeout: NodeJS.Timeout | null = null;
+
+/**
+ * Debounced function to restart the Brosel server.
+ */
+export function debouncedRestart() {
+	if (restartTimeout) {
+		clearTimeout(restartTimeout);
+	}
+	restartTimeout = setTimeout(async () => {
+		await restart();
+		restartTimeout = null;
+	}, 500);
 }
