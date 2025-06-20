@@ -9,8 +9,6 @@ export default load({
 		const script = await getClientScriptRoute(import.meta.path);
 		const posts = await loadMarkdownFiles("blog");
 
-		console.log(posts);
-
 		return await render({
 			component: (
 				<AllBlogPostsClient blogPosts={posts.raw as any} script={script} />

@@ -124,8 +124,7 @@ export async function restart() {
 
 	const end = performance.now();
 	const time = (end - startTime).toFixed(2);
-
-	//console.clear();
+	console.clear();
 	console.log(
 		`\n${chalk.greenBright(`Server running on http://${server.hostname}:${server.port} in dev-mode.`)}`,
 		`\n${chalk.grey(`Press ${chalk.cyanBright("CTRL + C")} to stop the server. It took ${time}ms to restart server.`)}\n`,

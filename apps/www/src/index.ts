@@ -1,4 +1,4 @@
-import { server } from "../brosel/server-options";
+import { server } from "brosel";
 
 export default server({
 	routes: {},

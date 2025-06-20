@@ -1,13 +1,7 @@
-/*
- * This file implements mutaions. This is a hook, and can be used to modify data on the client.
- * It's basically a type-safe fetch wrapper, with the types coming from the `routes`-folder.
- */
-
 import { type BunRequest, Glob } from "bun";
 import consola from "consola";
 import { z } from "zod/v4";
-import type { RoutePath } from "../.brosel/routes";
-import { getConfig } from "./config/get-config";
+import { getConfig } from "../config/get-config";
 
 type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -62,37 +56,4 @@ export type RoutePath = ${
 `;
 
 	await Bun.write(`${process.cwd()}/${config.devDir}/routes.ts`, content);
-}
-
-export async function useAction<T extends HTTPMethod | undefined>(
-	method: T,
-	url: RoutePath,
-	body: T extends "POST" ? Record<string, unknown> : never,
-) {
-	const res = await fetch(url, {
-		method: method ?? "GET",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: body ? JSON.stringify(body) : undefined,
-	});
-
-	if (!res.ok) {
-		throw new Error(
-			`Request failed with status ${res.status}. Please try again.`,
-		);
-	}
-
-	const contentType = res.headers.get("Content-Type");
-	if (contentType?.includes("application/json")) {
-		return (await res.json()) as T extends "POST"
-			? Record<string, unknown>
-			: unknown;
-	}
-
-	if (contentType?.includes("text/plain")) {
-		return (await res.text()) as T extends "POST"
-			? Record<string, unknown>
-			: unknown;
-	}
 }

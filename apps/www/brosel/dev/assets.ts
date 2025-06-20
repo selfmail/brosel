@@ -29,8 +29,5 @@ export async function loadAssets() {
 		);
 	};
 
-	console.log("Assets loaded:", Object.keys(assetsObject).length);
-	console.log(assetsObject);
-
 	return assetsObject;
 }
