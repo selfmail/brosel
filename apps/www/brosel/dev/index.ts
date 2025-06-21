@@ -157,16 +157,34 @@ async function runWithMiddleware(
 	}
 	// run path middlewares
 	for (const [middlewarePath, middleware] of pathMiddleware) {
+		// check if the pathes are matching
 		const url = new URL(req.url);
 		const path = url.pathname;
 		const matching = isPathMatching(middlewarePath, path);
+
+		// Pathes aren't matching, skip this middleware
 		if (!matching) {
 			continue; // skip if path does not match
 		}
 
-		console.log("matching!");
-
-		console.log(path);
+		// run middleware
+		let nextCalled = false;
+		let error: string | null = null;
+		const BroselMiddleware = Object.assign(new Response(), {
+			next() {
+				nextCalled = true;
+			},
+			deny(message?: string) {
+				error = message || "Access denied";
+			},
+		}) as BroselResponse;
+		middleware(req, BroselMiddleware);
+		if (error) {
+			return new Response(error, { status: 403 });
+		}
+		if (!nextCalled) {
+			return new Response("Middleware did not call next()", { status: 500 });
+		}
 	}
 
 	return await handler(req);
