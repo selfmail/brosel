@@ -2,6 +2,7 @@ import { exists } from "node:fs/promises";
 import { $, type BunRequest, serve } from "bun";
 import chalk from "chalk";
 import consola from "consola";
+import { type MatchFunction, type MatchResult, match } from "path-to-regexp";
 import { z } from "zod/v4";
 import { generateRoutePath } from "../actions";
 import { getConfig } from "../config/get-config";
@@ -13,6 +14,8 @@ import { loadAssets } from "./assets";
 import { loadPages } from "./pages";
 import { loadRoutes } from "./routes";
 import { loadClientScripts } from "./scripts";
+
+type Params = Record<string, string | string[]>;
 
 const config = await getConfig();
 
@@ -65,6 +68,7 @@ if (!parse.success) {
 	process.exit(1);
 }
 
+// a map to store all the routes with unique paths
 const routes = new Map<
 	string,
 	(req: BunRequest) => Response | Promise<Response>
@@ -86,21 +90,13 @@ const rootMiddleware = new Set<
 	(req: BunRequest, res: BroselResponse) => void
 >();
 
-const middleware = new Map<
+const pathMiddleware = new Map<
 	string,
-	(req: BunRequest) => Response | Promise<Response>
+	(req: BunRequest, res: BroselResponse) => Response | Promise<Response>
 >();
 
-const dirMiddleware = new Array<{
-	dir: "pages" | "assets" | "routes" | "dev" | "scripts";
-	middleware: (
-		req: BunRequest,
-		res: BroselResponse,
-	) => BroselResponse | Promise<BroselResponse>;
-	type: "dir-middleware";
-}>();
-
 for (const middleware of middlewares) {
+	console.log("middleware", middleware);
 	if (middleware.type === "root-middleware") {
 		if (rootMiddleware.has(middleware.middleware)) {
 			consola.warn(
@@ -110,32 +106,34 @@ for (const middleware of middlewares) {
 		}
 		rootMiddleware.add(middleware.middleware);
 	} else if (middleware.type === "middleware" && middleware.path) {
-		if (typeof middleware.middleware !== "function") {
-			consola.error(
-				`Middleware for path ${middleware.path} is not a function. Please check your middleware in ${middleware.dir}.`,
+		console.log("middleware.path", middleware.path);
+		if (pathMiddleware.has(middleware.path)) {
+			consola.warn(
+				`Middleware for path ${middleware.path} is already registered. Skipping duplicate.`,
 			);
 			continue;
 		}
-		routes.set(middleware.path, middleware.middleware);
-	} else if (middleware.type === "dir-middleware" && middleware.dir) {
-		const dir = middleware.dir;
-		if (!routesObject[dir]) {
-			routesObject[dir] = {};
-		}
-		routesObject[dir][middleware.path || "/"] = middleware.middleware;
+		pathMiddleware.set(middleware.path, middleware.middleware);
 	} else {
 		consola.warn(
-			`Unknown middleware type: ${middleware.type}. Please check your middleware in ${middleware.dir} and the path or dir!`,
+			`Unknown middleware type: ${middleware.type}. Please check the path or type!`,
 		);
 	}
 }
-
+consola.log("hey");
+function isPathMatching(
+	schema: string,
+	path: string,
+): MatchResult<Params> | false {
+	const fn: MatchFunction<Params> = match<Params>(schema);
+	return fn(path);
+}
 // Run the current request handler with a middleware chain
 async function runWithMiddleware(
 	handler: (req: BunRequest<string>) => Response | Promise<Response>,
-	req: BunRequest<string>,
+	req: BunRequest<"/">,
 ) {
-	// check for root middlewares
+	// run root middlewares
 	for (const middleware of rootMiddleware) {
 		let nextCalled = false;
 		let error: string | null = null;
@@ -157,8 +155,21 @@ async function runWithMiddleware(
 			return new Response("Middleware did not call next()", { status: 500 });
 		}
 	}
+	// run path middlewares
+	for (const [middlewarePath, middleware] of pathMiddleware) {
+		const url = new URL(req.url);
+		const path = url.pathname;
+		const matching = isPathMatching(middlewarePath, path);
+		if (!matching) {
+			continue; // skip if path does not match
+		}
 
-	return handler(req);
+		console.log("matching!");
+
+		console.log(path);
+	}
+
+	return await handler(req);
 }
 
 for (const [path, handler] of Object.entries(pathObject)) {
@@ -166,10 +177,15 @@ for (const [path, handler] of Object.entries(pathObject)) {
 		consola.error(`Handler for path ${path} is not a function.`);
 		continue;
 	}
+
 	if (routes.has(path)) {
 		consola.warn(`Path ${path} is already registered. Overwriting.`);
 	}
-	routes.set(path, handler);
+
+	routes.set(
+		path,
+		async (req: BunRequest) => await runWithMiddleware(handler, req),
+	);
 }
 
 for (const [path, handler] of Object.entries(routesObject)) {

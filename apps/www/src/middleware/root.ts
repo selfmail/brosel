@@ -1,10 +1,7 @@
 import { rootMiddleware } from "../../brosel/middleware";
 
 export default rootMiddleware(async (req, res) => {
-	// Example middleware logic
-	if (req.method !== "GET") {
-		return res.deny("Method not allowed");
-	}
+	console.log(`Request received: ${req.method} ${req.url}`);
 
 	// You can add more logic here, like authentication, logging, etc.
 

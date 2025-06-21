@@ -81,6 +81,7 @@ export function middleware(
 	return {
 		type: "middleware" as const,
 		middleware,
+		path,
 	};
 }
 
@@ -139,7 +140,7 @@ export async function loadMiddleware() {
 		type: Middleware;
 		path?: string;
 		middleware: (
-			req: BunRequest,
+			req: BunRequest<string>,
 			res: BroselResponse,
 		) => BroselResponse | Promise<BroselResponse>;
 		dir?: "pages" | "assets" | "routes" | "dev" | "scripts";
