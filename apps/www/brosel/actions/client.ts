@@ -5,7 +5,7 @@ type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE";
 export async function useAction<T extends HTTPMethod | undefined>(
 	method: T,
 	url: RoutePath,
-	body: T extends "POST" ? Record<string, unknown> : never,
+	body: T extends "POST" ? Record<string, unknown> : undefined,
 ) {
 	const res = await fetch(url, {
 		method: method ?? "GET",

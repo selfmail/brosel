@@ -10,6 +10,7 @@ declare global {
 		env: {
 	        NODE_ENV?: "development" | "production" | undefined;
             TZ?: string | undefined;
+            SESSION_SECRET: string;
 		};
 	};
 }

@@ -26,7 +26,8 @@
 		"noPropertyAccessFromIndexSignature": false,
 
 		"paths": {
-			"brosel": ["./brosel/index.ts"]
+			"brosel": ["./brosel/index.ts"],
+			"brosel/*": ["./brosel/*"]
 		}
 	}
 }

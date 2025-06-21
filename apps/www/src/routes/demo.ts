@@ -1,7 +1,10 @@
 import { route } from "brosel";
 
-export default route({
-    GET: async (req) => {
-        return new Response("Hello World")
-    }
-}, "/api/demo")
+export default route(
+	{
+		POST: async (req) => {
+			return new Response("Hello World");
+		},
+	},
+	"/api/demo",
+);
