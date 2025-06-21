@@ -28,3 +28,30 @@ export const ServerSchema = z.object({
 	routes: z.record(z.string(), z.any()).optional(),
 	error: z.any(),
 });
+
+function withSecurityHeaders(
+	handler: RouteHandler<string>,
+): RouteHandler<string> {
+	return async (req) => {
+		const res = await handler(req);
+		const headers = new Headers(res.headers);
+
+		headers.set("Content-Security-Policy", "default-src 'self'");
+		headers.set("X-Frame-Options", "DENY");
+		headers.set("X-Content-Type-Options", "nosniff");
+		headers.set("Referrer-Policy", "no-referrer");
+		headers.set(
+			"Strict-Transport-Security",
+			"max-age=63072000; includeSubDomains; preload",
+		);
+
+		return new Response(res.body, {
+			status: res.status,
+			statusText: res.statusText,
+			headers,
+		});
+	};
+}
+
+// Exportiere die Funktion, um sie beim Registrieren der Routen zu verwenden
+export { withSecurityHeaders };

@@ -8,6 +8,7 @@ export const ConfigSchema = z.object({
 	pagesDir: z.string(),
 	devDir: z.string(),
 	routesDir: z.string(),
+	middleWareDir: z.string(),
 
 	// secutiry
 	secutiry: z.object({
@@ -54,6 +55,7 @@ export type Config = Omit<z.infer<typeof ConfigSchema>, "markdown" | "env"> & {
 
 export default function config({
 	tailwind = true,
+	middleWareDir = "src/middleware",
 	assetsDir = "src/assets",
 	pagesDir = "src/pages",
 	devDir = ".brosel",
@@ -74,6 +76,7 @@ export default function config({
 }: Partial<Config>): Config {
 	return {
 		tailwind,
+		middleWareDir,
 		assetsDir,
 		routes,
 		env,

@@ -29,6 +29,7 @@
 		"marked": "^15.0.12",
 		"motion": "^12.16.0",
 		"ora": "^8.2.0",
+		"path-to-regexp": "^8.2.0",
 		"postcss": "^8.5.4",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",
