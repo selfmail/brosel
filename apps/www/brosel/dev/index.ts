@@ -74,6 +74,12 @@ const routes = new Map<
 	(req: BunRequest) => Response | Promise<Response>
 >();
 
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
+const apiRoutes = new Map<
+	string,
+	Partial<Record<HttpMethod, (req: BunRequest) => Response | Promise<Response>>>
+>();
+
 const middlewares = await loadMiddleware();
 
 const routesObject = await loadRoutes();
@@ -96,7 +102,6 @@ const pathMiddleware = new Map<
 >();
 
 for (const middleware of middlewares) {
-	console.log("middleware", middleware);
 	if (middleware.type === "root-middleware") {
 		if (rootMiddleware.has(middleware.middleware)) {
 			consola.warn(
@@ -106,7 +111,6 @@ for (const middleware of middlewares) {
 		}
 		rootMiddleware.add(middleware.middleware);
 	} else if (middleware.type === "middleware" && middleware.path) {
-		console.log("middleware.path", middleware.path);
 		if (pathMiddleware.has(middleware.path)) {
 			consola.warn(
 				`Middleware for path ${middleware.path} is already registered. Skipping duplicate.`,
@@ -120,7 +124,6 @@ for (const middleware of middlewares) {
 		);
 	}
 }
-consola.log("hey");
 function isPathMatching(
 	schema: string,
 	path: string,
@@ -206,21 +209,34 @@ for (const [path, handler] of Object.entries(pathObject)) {
 	);
 }
 
+// TODO: implement middlewares for routes, with the unique object structure
 for (const [path, handler] of Object.entries(routesObject)) {
 	if (typeof handler !== typeof {}) {
 		consola.warn(`Handler for route ${path} is not an object.`);
 		continue;
 	}
-	if (routes.has(path)) {
+	if (apiRoutes.has(path)) {
 		consola.warn(`Route ${path} is already registered. Overwriting.`);
+	} else if (routes.has(path)) {
+		consola.error(`Route ${path} is already registered as a page.`);
+		process.exit(1);
 	}
+
+	apiRoutes.set(path, {
+		...Object.fromEntries(
+			Object.entries(handler).map(([method, fn]) => [
+				method.toUpperCase(),
+				async (req: BunRequest) => await runWithMiddleware(fn, req),
+			]),
+		),
+	});
 }
 
 const server = serve({
 	...(parse.data as Bun.ServeFunctionOptions<unknown, object>),
 	routes: {
 		...Object.fromEntries(routes),
-		...routesObject,
+		...Object.fromEntries(apiRoutes),
 	},
 });
 

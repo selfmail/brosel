@@ -68,15 +68,15 @@ export function rootMiddleware(
  * }, "/api/*");
  * ```
  */
-export function middleware(
+export function middleware<T extends string>(
 	middleware: (
-		req: BunRequest,
+		req: BunRequest<T>,
 		res: Response & {
 			next: () => never;
 			deny: (message?: string) => never;
 		},
 	) => BroselResponse | Promise<BroselResponse>,
-	path: string,
+	path: T,
 ) {
 	return {
 		type: "middleware" as const,
