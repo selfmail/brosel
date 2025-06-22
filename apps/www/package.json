@@ -4,7 +4,7 @@
 	"type": "module",
 	"private": true,
 	"scripts": {
-		"dev": "bun run brosel/dev",
+		"dev": "bun run --watch brosel/dev",
 		"start": "bun run brosel/start"
 	},
 	"devDependencies": {

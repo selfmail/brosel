@@ -5,6 +5,11 @@ declare global {
 	var dev: boolean;
 	var server: Bun.Server | undefined;
 	var scriptPath: Record<string, string>;
+	var throwError: (params: {
+		publicMessage: string;
+		code: number;
+		details?: string;
+	}) => never;
 
 	var process: Omit<NodeJS.Process, "env"> & {
 		env: {

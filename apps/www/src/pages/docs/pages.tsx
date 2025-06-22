@@ -1,4 +1,5 @@
 import { getClientScriptRoute, load, loadMarkdownFiles, render } from "brosel";
+import { BroeselError, error } from "brosel/errors";
 import DocsPageComponent from "./pages.client";
 
 export default load({

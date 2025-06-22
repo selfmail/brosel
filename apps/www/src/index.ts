@@ -5,6 +5,6 @@ export default server({
 	hostname: "localhost",
 	port: 3000,
 	error: (err) => {
-		throw new Error(err.message);
+		return new Response("Error occured!" + err, { status: 500 });
 	},
 });

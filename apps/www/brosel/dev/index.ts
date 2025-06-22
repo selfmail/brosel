@@ -232,6 +232,8 @@ for (const [path, handler] of Object.entries(routesObject)) {
 	});
 }
 
+globalThis.throwError = throwError;
+
 const server = serve({
 	...(parse.data as Bun.ServeFunctionOptions<unknown, object>),
 	routes: {
