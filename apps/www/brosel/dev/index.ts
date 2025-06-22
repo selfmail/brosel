@@ -4,10 +4,9 @@ import {
 	routesWithMiddleware,
 	sortMiddlewares,
 } from "brosel/load/middleware";
-import { $, type BunRequest, serve } from "bun";
+import { $, serve } from "bun";
 import chalk from "chalk";
 import consola from "consola";
-import { type MatchFunction, type MatchResult, match } from "path-to-regexp";
 import { z } from "zod/v4";
 import { generateRoutePath } from "../actions";
 import { getConfig } from "../config/get-config";

@@ -1,23 +1,27 @@
-import { rm } from "node:fs/promises";
-import { $ } from "bun";
+import { exists, rm } from "node:fs/promises";
+import {
+	apiRoutesWithMiddleware,
+	routesWithMiddleware,
+	sortMiddlewares,
+} from "brosel/load/middleware";
+import { $, serve } from "bun";
 import chalk from "chalk";
 import consola from "consola";
 import ora from "ora";
-import { z } from "zod";
+import { z } from "zod/v4";
+import { generateRoutePath } from "../actions";
 import { getConfig } from "../config/get-config";
 import { checkEnv } from "../env";
+import { throwError } from "../error";
+import { loadAssets } from "../load/assets";
+import { loadPages } from "../load/pages";
+import { loadRoutes } from "../load/routes";
+import { loadClientScripts } from "../load/scripts";
 import { getMarkdownFiles } from "../markdown";
-import { loadProductionAssets } from "./assets";
-import { loadProductionPages } from "./pages";
-import { loadProductionRoutes } from "./routes";
-import { loadProductionClientScripts } from "./scripts";
-import { checkForRequiredDirectories } from "./utils";
-
-globalThis.scriptPath = {};
-globalThis.dev = false;
+import { loadMiddleware } from "../middleware";
+import { ServerSchema } from "../server-options";
 
 const config = await getConfig();
-
 const spinner = ora("Deleting old cache files...").start();
 
 await rm(`${process.cwd()}/${config.devDir}`, {
@@ -38,16 +42,25 @@ if (config.secutiry.runAuditInProduction) {
 		process.exit(1);
 	}
 }
-
 if (config.tailwind) {
 	spinner.text = "Compiling TailwindCSS...";
-	const code =
-		await $`bunx @tailwindcss/cli -i ${process.cwd()}/${config.globalCSS} -o ${process.cwd()}/.brosel/out.css`
-			.nothrow()
-			.quiet();
+	const tailwind =
+		await $`bunx @tailwindcss/cli -i ./${config.globalCSS} -o ./${config.devDir}/out.css`
+			.quiet()
+			.nothrow();
+	if (tailwind.exitCode !== 0) {
+		consola.error(
+			`Tailwind CLI failed to run. Please check your Tailwind configuration. Error: ${tailwind.stderr}`,
+		);
+		process.exit(1);
+	}
+}
 
-	if (code.exitCode !== 0) {
-		console.error("TailwindCSS failed to compile.");
+// check for required directories
+spinner.text = "Checking for required directories...";
+for (const dir of [config.assetsDir, config.pagesDir, config.routesDir]) {
+	if (!(await exists(`${process.cwd()}/${dir}`))) {
+		consola.error(`Directory ${dir} not found. Please create it.`);
 		process.exit(1);
 	}
 }
@@ -56,61 +69,63 @@ if (config.markdown) {
 	await getMarkdownFiles();
 }
 
+// parse env variables
 spinner.text = "Checking env variables...";
 await checkEnv();
 
-spinner.text = "Checking for required directories...";
-await checkForRequiredDirectories();
+await generateRoutePath();
 
 spinner.text = "Compiling routes...";
 
-const pagesObject = await loadProductionPages();
-const scriptsObject = await loadProductionClientScripts();
-const routesObject = await loadProductionRoutes();
-const assetsObject = await loadProductionAssets();
+const mainModule = await import(`${process.cwd()}/src/index.ts`);
 
-spinner.stop();
-
-const serverConf = await import(`${process.cwd()}/src/index.ts`);
-
-if (!serverConf.default) {
+if (typeof mainModule.default !== typeof {}) {
 	consola.error(
 		"The default export in src/index.ts is not a function. It must return the server() function.",
 	);
 	process.exit(1);
 }
 
-const serverConfSchema = await z
-	.object({
-		port: z.number().optional(),
-		hostname: z.string().optional(),
-		routes: z.record(z.string(), z.any()).optional(),
-		error: z.any(),
-	})
-	.safeParseAsync(serverConf.default);
-
-if (!serverConfSchema.success) {
-	console.log(serverConfSchema.error.issues);
-	throw new Error("Failed to parse server options");
+// running the main server from "src/index.ts"
+const parse = await ServerSchema.safeParseAsync(mainModule.default);
+if (!parse.success) {
+	consola.error(`Server options error: ${z.prettifyError(parse.error)}`);
+	process.exit(1);
 }
 
-const serverOptions = serverConfSchema.data;
+// loaded middlewares
+const middlewares = await loadMiddleware();
 
-const server = Bun.serve({
-	port: serverOptions.port ?? 3000,
-	hostname: serverOptions.hostname ?? "0.0.0.0",
-	error: (err) => {
-		return new Response(err.message);
-	},
+// load all routes, put them into an object
+const routesObject = await loadRoutes();
+const pagesObject = await loadPages();
+const assetsObject = await loadAssets();
+const scriptsObject = await loadClientScripts();
+const pathObject = {
+	...pagesObject,
+	...scriptsObject,
+	...assetsObject,
+};
+
+globalThis.throwError = throwError;
+
+await sortMiddlewares(middlewares);
+
+const routes = await routesWithMiddleware(pathObject);
+const apiRoutes = await apiRoutesWithMiddleware(routesObject);
+
+spinner.stop();
+const server = serve({
+	...(parse.data as Bun.ServeFunctionOptions<unknown, object>),
 	routes: {
-		...pagesObject,
-		...scriptsObject,
-		...routesObject,
-		...assetsObject,
-		...serverOptions.routes,
+		...routes,
+		...apiRoutes,
 	},
 });
 
+globalThis.server = server;
+
+console.clear();
 console.log(`
 ${chalk.blue(`Started production server on http://localhost:${server.port || 3000}`)}
 ${chalk.grey("The production server is not recommended for development.")}    

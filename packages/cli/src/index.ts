@@ -81,7 +81,7 @@ const main = defineCommand({
 				title: `Cloning the brosel template for ${conf.frontendLibrary}`,
 				task: async (message) => {
 					const clone =
-						await $`bunx gitpick i-am-henri/brosel/tree/main/templates/${conf.frontendLibrary} ${args.name}`
+						await $`bunx gitpick selfmail/brosel/tree/main/templates/${conf.frontendLibrary} ${args.name}`
 							.nothrow()
 							.quiet();
 
