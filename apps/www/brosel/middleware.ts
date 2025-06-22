@@ -127,7 +127,7 @@ export function dirMiddleware(
 	};
 }
 
-export type Middleware = "root-middleware" | "middleware" | "dir-middleware";
+export type Middleware = "root-middleware" | "middleware";
 /**
  * Loads all middlewares into an array, and returns them.
  * This function scans the middleware directory for all files that export a middleware function.
@@ -185,9 +185,6 @@ export async function loadMiddleware() {
 					};
 					if (exported.type === "middleware" && exported.path) {
 						entry.path = exported.path;
-					}
-					if (exported.type === "dir-middleware" && exported.dir) {
-						entry.dir = exported.dir;
 					}
 					middlewares.push(entry);
 				}

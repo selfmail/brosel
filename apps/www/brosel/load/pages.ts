@@ -13,6 +13,10 @@ export async function loadPages() {
 		recursive: true,
 		force: true,
 	});
+	await rm(`${process.cwd()}/${config.devDir}/client-scripts`, {
+		recursive: true,
+		force: true,
+	});
 
 	globalThis.scriptPath = globalThis.scriptPath || {};
 

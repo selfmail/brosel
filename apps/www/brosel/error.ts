@@ -4,6 +4,7 @@ export class BroeselError extends Error {
 	public code?: string;
 	public details?: unknown;
 
+	// FIXME: add you custom error handling logic here, like logging the error to a file or sending it to an error tracking service
 	constructor({
 		publicMessage = "An error occurred in Brösel",
 		code,
