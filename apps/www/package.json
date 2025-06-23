@@ -18,6 +18,7 @@
 		"typescript": "^5.8.3"
 	},
 	"dependencies": {
+		"@pixi/react": "^8.0.2",
 		"@tailwindcss/cli": "^4.1.10",
 		"@tailwindcss/postcss": "^4.1.8",
 		"bun-plugin-tailwind": "^0.0.15",
@@ -30,10 +31,12 @@
 		"motion": "^12.16.0",
 		"ora": "^8.2.0",
 		"path-to-regexp": "^8.2.0",
+		"pixi.js": "^8.10.1",
 		"postcss": "^8.5.4",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",
 		"react-markdown": "^10.1.0",
+		"sugar-high": "^0.9.3",
 		"tailwindcss": "^4.1.8",
 		"zod": "^3.25.55"
 	}

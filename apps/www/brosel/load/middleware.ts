@@ -14,7 +14,7 @@ const routes = new Map<
 // map for the api routes, which need a new map because they can have multiple methods
 const apiRoutes = new Map<
 	string,
-	Partial<Record<HttpMethod, (req: BunRequest) => Response | Promise<Response>>>
+	Partial<Record<HttpMethod, (req: BunRequest) => Promise<Response>>>
 >();
 
 /**
@@ -27,7 +27,7 @@ const rootMiddleware = new Set<
 
 const pathMiddleware = new Map<
 	string,
-	(req: BunRequest, res: BroselResponse) => Response | Promise<Response>
+	(req: BunRequest, res: BroselResponse) => Promise<Response>
 >();
 
 type Middleware = {
@@ -56,7 +56,13 @@ export async function sortMiddlewares(middlewares: Middleware) {
 				);
 				continue;
 			}
-			pathMiddleware.set(middleware.path, middleware.middleware);
+			pathMiddleware.set(
+				middleware.path,
+				middleware.middleware as (
+					req: BunRequest<string>,
+					res: BroselResponse,
+				) => Promise<Response>,
+			);
 		} else {
 			consola.warn(
 				`Unknown middleware type: ${middleware.type}. Please check the path or type!`,
@@ -126,8 +132,14 @@ async function runWithMiddleware(
 				error = message || "Access denied";
 			},
 		}) as BroselResponse;
-		middleware(req, BroselMiddleware);
+		await middleware(req, BroselMiddleware).catch((err) => {
+			error = err instanceof Error ? err.message : "Unknown error";
+			console.log(err.message);
+			consola.error(`Error in middleware for path ${middlewarePath}:`, error);
+			nextCalled = false;
+		});
 		if (error) {
+			console.log("Error in middleware:", error);
 			return new Response(error, { status: 403 });
 		}
 		if (!nextCalled) {
