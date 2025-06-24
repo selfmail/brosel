@@ -10,6 +10,9 @@ export default config({
 				"SESSION_SECRET is required, with a minimum length of 32 characters.",
 			),
 	},
+	secutiry: {
+		runAuditInProduction: false,
+	},
 	markdown: {
 		blog: {
 			path: "src/blog",

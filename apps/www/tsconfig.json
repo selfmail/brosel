@@ -27,7 +27,9 @@
 
 		"paths": {
 			"brosel": ["./brosel/index.ts"],
-			"brosel/*": ["./brosel/*"]
-		}
+			"brosel/*": ["./brosel/*"],
+			"@/*": ["./src/*"]
+		},
+		"baseUrl": "."
 	}
 }
