@@ -1,5 +1,8 @@
+import Code from "@/components/code";
 import Header from "@/components/header";
 import { Button } from "@/components/ui/button";
+import { serverEntryExample } from "@/examples";
+import { AtomIcon, ComputerIcon, FolderIcon } from "lucide-react";
 import HomeLayout from "../layouts/home";
 
 function RightStar({ className }: { className?: string }) {
@@ -12,6 +15,7 @@ function RightStar({ className }: { className?: string }) {
 		</div>
 	);
 }
+
 function LeftStar({ className }: { className?: string }) {
 	return (
 		<div
@@ -41,7 +45,7 @@ export default function Home({
 						<LeftStar className="absolute bottom-0 -left-0.5 z-20" />
 						<div className="space-y-4 flex-col z-10 flex items-center justify-center h-full">
 							<h1 className="text-4xl text-center font-medium lg:max-w-[50%]">
-								You framework.
+								Your framework.
 								<br />
 								Local in your project.
 							</h1>
@@ -60,29 +64,106 @@ export default function Home({
 						</div>
 					</section>
 					<section className="border-2 grid grid-cols-3 border-neutral-800">
-						<div className="border-r-2 border-r-neutral-800">
-							<h2 className="text-lg font-medium">The local framework</h2>
+						<div className="border-r-2 border-r-neutral-800 border-dashed space-y-4 p-8">
+							<h2 className="text-lg text-blue-200 font-medium flex items-center space-x-2">
+								<ComputerIcon size={14} />
+								<span>SSR</span>
+							</h2>
+							<p>
+								Brösel renders the pages on the server. After that, the
+								hydration comes.
+							</p>
 						</div>
-						<div>hey</div>
-						<div>hey</div>
+						<div className="border-r-2 border-r-neutral-800 border-dashed space-y-4 p-8">
+							<h2 className="text-lg text-blue-200 font-medium flex items-center space-x-2">
+								<AtomIcon size={14} />
+								<span>React</span>
+							</h2>
+							<p>
+								Use React, Solid or Preact as your frontend library, use Brösel
+								to render your logic!
+							</p>
+						</div>
+						<div className="space-y-4 p-8">
+							<h2 className="text-lg text-blue-200 font-medium flex items-center space-x-2">
+								<FolderIcon size={14} />
+								<span>Local</span>
+							</h2>
+							<p>
+								Brösel lives in the <code>brosel</code> folder, right inside
+								your project. You can change every line of code.
+							</p>
+						</div>
 					</section>
 					<section className="border-2 grid grid-cols-2 border-neutral-800">
-						<div className="space-y-4 sticky top-0 p-8 border-r-2 border-dashed border-r-neutral-800">
+						<div className="space-y-4 self-start  sticky top-0 p-8 ">
 							<h2 className="text-2xl font-medium">Extendable by default</h2>
 							<p>
 								Brösel lives in your project – this means you can edit, add or
-								remove everything!
+								remove everything! We also plan to include a plugin system in
+								the near future!
 							</p>
 						</div>
-						<div className="flex flex-col divide-y-2 divide-dashed divide-neutral-800">
-							<div className="flex items-center p-8">
-								<h3 className="text-lg font-medium">Built-in features</h3>
+						<div className="flex flex-col border-l-2 border-dashed border-l-neutral-800 divide-y-2 divide-dashed divide-neutral-800">
+							<div className="flex flex-col space-y-2 p-8">
+								<h3 className="text-lg font-medium">Authentication</h3>
+								<p>
+									Some basic authentication methods to get started. You can
+									configure the server aspect in api routes, you can use your
+									own database or a local saving method!
+								</p>
 							</div>
-							<div className="flex items-center p-8">
-								<h3 className="text-lg font-medium">Extensible</h3>
+							<div className="flex flex-col space-y-2 p-8">
+								<h3 className="text-lg font-medium">Markdown</h3>
+								<p>
+									Brösel has a built-in markdown support, with hot reloading,
+									frontmatter parsing and the option to render the markdown with
+									react.
+								</p>
 							</div>
-							<div className="flex items-center p-8">
-								<h3 className="text-lg font-medium">Local in your project</h3>
+							<div className="flex flex-col space-y-2 p-8">
+								<h3 className="text-lg font-medium">Hooks</h3>
+								<p>
+									Use prebuilt react hooks, to get started even faster. For
+									example, a path hook, action hook (for a typesafe option to
+									mutate data with the api routes) and a form hook.
+								</p>
+							</div>
+							<div className="flex flex-col space-y-2 p-8">
+								<h3 className="text-lg font-medium">Analytics</h3>
+								<p>
+									Brösel has a built-in analytics support, with major Providers
+									like posthog. You can track page views, server side event and
+									more.
+								</p>
+							</div>
+							<div className="flex flex-col space-y-2 p-8">
+								<h3 className="text-lg font-medium">Errors</h3>
+								<p>
+									Track and handle errors easily – for example with a custom
+									error api, error pages and tracking methods. You can use
+									providers like sentry, integrate or create your owns and more.
+								</p>
+							</div>
+						</div>
+					</section>
+					<section className="border-2 flex flex-col divide-y divide-neutral-800 border-neutral-800 lg:w-[900px]">
+						<div className="flex flex-col p-8 space-y-4">
+							<h2 className="text-2xl font-medium">Ship really fast</h2>
+							<p>
+								Just create a simple server entry for every page. The page is
+								going to be generated on the server, so you have to pass the
+								component to the function.
+							</p>
+							<div className="flex flex-col w-full rounded-lg">
+								<div className="p-2 flex space-x-3 items-center bg-neutral-800 rounded-t-lg">
+									<p>index.ts</p>
+								</div>
+								<Code
+									className="rounded-b-lg p-2 bg-neutral-600"
+									code={serverEntryExample}
+									lang="ts"
+								/>
 							</div>
 						</div>
 					</section>
