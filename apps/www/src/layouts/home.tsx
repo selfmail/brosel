@@ -3,7 +3,7 @@ export default function HomeLayout({
 	children,
 	props,
 }: {
-	script: string;
+	script?: string;
 	props: Record<string, unknown>;
 	children: React.ReactNode;
 }) {
@@ -21,7 +21,7 @@ export default function HomeLayout({
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<title>Brösel</title>
 				<link rel="stylesheet" href="/assets/styles.css" />
-				<script src={script} />
+				{script && <script src={script} />}
 			</head>
 			{children}
 		</html>

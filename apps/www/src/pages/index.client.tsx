@@ -30,13 +30,9 @@ function LeftStar({ className }: { className?: string }) {
 	);
 }
 
-export default function Home({
-	script,
-}: {
-	script: string;
-}) {
+export default function Home() {
 	return (
-		<HomeLayout script={script} props={{ script }}>
+		<HomeLayout props={{}}>
 			<body className="h-full flex flex-col items-center pt-6 w-full bg-neutral-950 text-white">
 				<Header />
 				<div className="relative lg:w-[900px] space-y-12">
