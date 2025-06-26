@@ -1,5 +1,8 @@
-import Code from "@/components/code";
+/// <reference lib="dom" />
+import CodeBlock from "@/components/codeblock";
+import Footer from "@/components/footer";
 import Header from "@/components/header";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { serverEntryExample } from "@/examples";
 import { AtomIcon, ComputerIcon, FolderIcon } from "lucide-react";
@@ -34,7 +37,7 @@ export default function Home({
 }) {
 	return (
 		<HomeLayout script={script} props={{ script }}>
-			<body className="h-full flex flex-col items-center py-6 w-full bg-neutral-950 text-white">
+			<body className="h-full flex flex-col items-center pt-6 w-full bg-neutral-950 text-white">
 				<Header />
 				<div className="relative lg:w-[900px] space-y-12">
 					{/* Hero Section */}
@@ -44,6 +47,7 @@ export default function Home({
 						<RightStar className="absolute bottom-0 -right-0.5 z-20" />
 						<LeftStar className="absolute bottom-0 -left-0.5 z-20" />
 						<div className="space-y-4 flex-col z-10 flex items-center justify-center h-full">
+							<Badge>Announcing first public release!</Badge>
 							<h1 className="text-4xl text-center font-medium lg:max-w-[50%]">
 								Your framework.
 								<br />
@@ -155,19 +159,11 @@ export default function Home({
 								going to be generated on the server, so you have to pass the
 								component to the function.
 							</p>
-							<div className="flex flex-col w-full rounded-lg">
-								<div className="p-2 flex space-x-3 items-center bg-neutral-800 rounded-t-lg">
-									<p>index.ts</p>
-								</div>
-								<Code
-									className="rounded-b-lg p-2 bg-neutral-600"
-									code={serverEntryExample}
-									lang="ts"
-								/>
-							</div>
+							<CodeBlock code={serverEntryExample} file="index.ts" />
 						</div>
 					</section>
 				</div>
+				<Footer />
 			</body>
 		</HomeLayout>
 	);

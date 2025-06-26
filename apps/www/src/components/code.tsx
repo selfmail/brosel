@@ -11,7 +11,7 @@ export default async function Code({
 }) {
 	const html = await codeToHtml(code, {
 		lang: lang ?? "typescript",
-		theme: "github-dark",
+		theme: "vesper",
 	});
 
 	return (

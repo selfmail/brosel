@@ -1,4 +1,4 @@
-export const serverEntryExample = `import { load, render } from "brosel;
+export const serverEntryExample = `import { load, render } from "brosel";
 import Component from "./Component";
 
 export default load(async (req) => {

@@ -5,6 +5,7 @@ import Component from "./index.client";
 export default load({
 	handler: async () => {
 		const script = await getClientScriptRoute(import.meta.path);
+		console.log("Loaded script:", script);
 		return await render({
 			component: <Component script={script} />,
 			props: { script },

@@ -153,14 +153,18 @@ a:hover {
 	--sh-keyword: #f47067;
 	--sh-comment: #a19595;
 }
-pre code {
-	counter-reset: sh-line-number;
+/* Codeblock styles, for example a number counter */
+code {
+	counter-reset: step;
+	counter-increment: step 0;
 }
 
-.sh__line::before {
-	counter-increment: sh-line-number 1;
-	content: counter(sh-line-number);
-	margin-right: 24px;
+code .line::before {
+	content: counter(step);
+	counter-increment: step;
+	width: 1rem;
+	margin-right: 1.5rem;
+	display: inline-block;
 	text-align: right;
-	color: #a4a4a4;
+	color: rgba(115, 138, 148, 0.4);
 }
