@@ -1,5 +1,22 @@
 import { z } from "zod/v4";
 
+const createAsyncFunctionSchema = <T extends z.core.$ZodFunction>(schema: T) =>
+	z.custom<Parameters<T["implementAsync"]>[0]>((fn) =>
+		schema.implementAsync(fn as () => void),
+	);
+
+const LoggingSchema = z.object({
+	logToFile: z.object({
+		enabled: z.boolean(),
+		file: z.string(),
+	}),
+	logStartingWarningsToConsole: z.boolean(),
+	logStartingInfosToConsole: z.boolean(),
+	customLogFunction: createAsyncFunctionSchema(
+		z.function({ input: z.tuple([]), output: z.promise(z.string()) }),
+	).optional(),
+});
+
 export const ConfigSchema = z.object({
 	tailwind: z.boolean(),
 
@@ -39,6 +56,8 @@ export const ConfigSchema = z.object({
 		.optional(),
 
 	env: z.record(z.string(), z.any()),
+
+	logging: LoggingSchema,
 });
 
 export type Config = Omit<z.infer<typeof ConfigSchema>, "markdown" | "env"> & {
@@ -73,6 +92,16 @@ export default function config({
 	env = {
 		NODE_ENV: z.enum(["development", "production"]).optional(),
 	},
+
+	logging = {
+		logToFile: {
+			enabled: false,
+			file: "logs/brosel.log",
+		},
+		logStartingWarningsToConsole: true,
+		logStartingInfosToConsole: false,
+		customLogFunction: undefined,
+	},
 }: Partial<Config>): Config {
 	return {
 		tailwind,
@@ -80,6 +109,7 @@ export default function config({
 		assetsDir,
 		routes,
 		env,
+		logging,
 		pagesDir,
 		globalCSS,
 		devDir,
@@ -90,20 +120,36 @@ export default function config({
 	};
 }
 
+export async function parseConfig(
+	config: Config,
+): Promise<{ error: string } | { data: Config }> {
+	const parse = await ConfigSchema.safeParseAsync(config);
+
+	if (!parse.success) {
+		const prettyError = z.prettifyError(parse.error);
+
+		return {
+			error: prettyError,
+		};
+	}
+
+	return {
+		data: parse.data,
+	};
+}
+
 export async function getConfig() {
 	const config = await import(`${process.cwd()}/config.ts`);
 	if (!config.default) {
-		consola.error(
+		console.error(
 			"No config.ts file found in the root of your project. Please create one and return congig() function from it.",
 		);
 		process.exit(1);
 	}
 
-	const parse = await ConfigSchema.safeParseAsync(config.default);
-
-	if (!parse.success) {
-		const prettyError = z.prettifyError(parse.error);
-		consola.error(`Config Error: ${prettyError}`);
+	const parse = await parseConfig(config.default);
+	if ("error" in parse) {
+		console.error(`Config Error: ${parse.error}`);
 		process.exit(1);
 	}
 
