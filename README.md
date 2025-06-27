@@ -5,4 +5,4 @@ Brösel is german for "crumbs", and this is describing this framework really wel
 It's made for bun, and it's not made to be used outside of bun. You have to **use bun** to use it, you can install [bun here](https://bun.sh).
 
 **Plugins in Brösel**
-![Bildschirmfoto 2025-06-27 um 20 22 27](https://github.com/user-attachments/assets/21db5a2c-da20-4fd3-a912-e35d34cd041f)
+![Plugins in Brösel](https://github.com/user-attachments/assets/21db5a2c-da20-4fd3-a912-e35d34cd041f)

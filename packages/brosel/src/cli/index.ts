@@ -1,4 +1,3 @@
-// complete typesafe cli
 // #!/usr/bin/env bun
 
 import { createCli } from "../utils/cli";

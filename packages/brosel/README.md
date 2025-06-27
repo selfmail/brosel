@@ -1,15 +1,11 @@
-# brosel
+**Brösel Package**
 
-To install dependencies:
+This is the official npm package for Brösel. This package includes everything to start and use Brösel in your projects. It's very customizable and easy to understand.
 
-```bash
-bun install
-```
-
-To run:
+**Create a new project**
 
 ```bash
-bun run src/index.ts
+bun create brosel
 ```
 
-This project was created using `bun init` in bun v1.2.15. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+This create a new project. You can alternatively run `bunx brosel create` to create a new project.
