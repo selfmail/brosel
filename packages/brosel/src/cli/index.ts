@@ -1,4 +1,5 @@
-#!/usr/bin/env bun
+// complete typesafe cli
+// #!/usr/bin/env bun
 
 import { createCli } from "../utils/cli";
 
@@ -12,11 +13,7 @@ const cli = await createCli({
 	},
 	commands: {
 		dev: {
-			action: async (args) => {
-				console.log("Starting development server with args:", args);
-				// Here you would typically start your development server
-				// For example, you might use a bundler like Vite or Webpack
-			},
+			action: async (args) => {},
 			options: {
 				port: {
 					type: "number",
