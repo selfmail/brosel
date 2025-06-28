@@ -1,6 +1,6 @@
 type OptionType = "string" | "number" | "boolean" | "array";
 
-type Option = {
+export type Option = {
 	type: OptionType;
 	required: boolean;
 	name: string;
@@ -24,6 +24,55 @@ type InferArgs<T extends Record<string, Option>> = {
 	[K in keyof T as T[K]["required"] extends true
 		? never
 		: K]?: InferOptionValue<T[K]>;
+};
+
+export type CLIConfig<
+	T extends {
+		[key: string]: Record<string, Option>;
+	},
+> = {
+	commands: {
+		[K in keyof T]: {
+			action: (
+				args: InferArgs<T[K]>,
+				meta: {
+					name: string;
+					description: string;
+					command: string;
+				},
+			) => void | Promise<void>;
+			options: T[K];
+		};
+	};
+	name: string;
+	/**
+	 * Development flag to enable development mode. Once enabled, the cli will log helpful
+	 * debug information to the console.
+	 */
+	development?: boolean;
+	/**
+	 * You can provide a help command with the avaiable commands and a description.
+	 */
+	help?: {
+		/**
+		 * The command to execute to get help.
+		 *
+		 * For example:
+		 *
+		 * `help` => `bun cli.ts help`
+		 *
+		 * or
+		 *
+		 * `--help` => `bun cli.ts --help`
+		 */
+		command: string;
+		/**
+		 * The answer for the help command. This has to be a string which get's returned.
+		 * You can add colors to the string with libraries like `chalk`.
+		 */
+		answer: string;
+	};
+	description: string;
 };
 
 /**
@@ -71,50 +120,7 @@ export async function createCli<
 	description,
 	help,
 	development = false,
-}: {
-	commands: {
-		[K in keyof T]: {
-			action: (
-				args: InferArgs<T[K]>,
-				meta: {
-					name: string;
-					description: string;
-					command: string;
-				},
-			) => void | Promise<void>;
-			options: T[K];
-		};
-	};
-	name: string;
-	/**
-	 * Development flag to enable development mode. Once enabled, the cli will log helpful
-	 * debug information to the console.
-	 */
-	development?: boolean;
-	/**
-	 * You can provide a help command with the avaiable commands and a description.
-	 */
-	help?: {
-		/**
-		 * The command to execute to get help.
-		 *
-		 * For example:
-		 *
-		 * `help` => `bun cli.ts help`
-		 *
-		 * or
-		 *
-		 * `--help` => `bun cli.ts --help`
-		 */
-		command: string;
-		/**
-		 * The answer for the help command. This has to be a string which get's returned.
-		 * You can add colors to the string with libraries like `chalk`.
-		 */
-		answer: string;
-	};
-	description: string;
-}): Promise<
+}: CLIConfig<T>): Promise<
 	// return type if everything goes well, then we return the given parameters
 	| {
 			command: string;

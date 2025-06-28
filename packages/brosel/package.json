@@ -23,6 +23,7 @@
 		"typescript": "^5"
 	},
 	"dependencies": {
+		"chalk": "^5.4.1",
 		"citty": "^0.1.6"
 	}
 }
