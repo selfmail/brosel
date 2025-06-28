@@ -84,7 +84,14 @@ fi
 # Update package.json version
 print_status "Updating package.json version..."
 cd $PACKAGE_DIR
-npm version $NEW_VERSION --no-git-tag-version
+# Use node to update version instead of npm to avoid workspace conflicts
+node -e "
+const fs = require('fs');
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+pkg.version = '$NEW_VERSION';  
+fs.writeFileSync('package.json', JSON.stringify(pkg, null, '\t') + '\n');
+console.log('Updated to version: ' + pkg.version);
+"
 cd ../..
 
 # Build the package
