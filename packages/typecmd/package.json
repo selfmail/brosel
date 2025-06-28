@@ -8,13 +8,21 @@
 		"url": "https://selfmail.app"
 	},
 	"main": "dist/index.js",
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"types": "dist/index.d.ts",
 	"repository": {
 		"url": "https://github.com/selfmail/brosel/tree/main/packages/typecmd"
 	},
 	"license": "MIT",
-	"keywords": ["cli", "typescript", "command", "selfmail", "brosel"],
+	"keywords": [
+		"cli",
+		"typescript",
+		"command",
+		"selfmail",
+		"brosel"
+	],
 	"bugs": {
 		"url": "https://github.com/selfmail/brosel/issues"
 	},
