@@ -53,7 +53,7 @@ cd ../..
 
 # Test help command
 echo "Testing help command..."
-if cd packages/brosel && timeout 5s bun run src/cli/index.ts --help >/dev/null 2>&1; then
+if timeout 5s bun run packages/brosel/src/cli/index.ts --help >/dev/null 2>&1; then
     echo "✅ Help command works"
 else
     echo "✅ Help command executed (timeout is expected)"
@@ -78,4 +78,3 @@ echo "GitHub Actions will run:"
 echo "  - On push to main/develop branches"
 echo "  - On pull requests"
 echo "  - When CLI files are modified"
-echo "  - Daily for health monitoring"
