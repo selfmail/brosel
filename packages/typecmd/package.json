@@ -1,5 +1,5 @@
 {
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"name": "typecmd",
 	"description": "A TypeScript command line argument parser, completely typesafe and written in under 300 lines of code.",
 	"author": {
