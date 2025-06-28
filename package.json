@@ -8,7 +8,8 @@
 		"format": "prettier --write \"**/*.{ts,tsx,md}\"",
 		"check-types": "turbo run check-types",
 		"test": "turbo run test",
-		"test:cli": "cd packages/brosel && bun test tests/cli.test.ts"
+		"test:cli": "cd packages/brosel && bun test tests/cli.test.ts",
+		"release:typecmd": "./scripts/release-typecmd.sh"
 	},
 	"devDependencies": {
 		"prettier": "^3.5.3",

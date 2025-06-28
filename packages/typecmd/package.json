@@ -1,13 +1,14 @@
 {
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"name": "typecmd",
-	"description": "A short description of your package",
+	"description": "A TypeScript command line argument parser, completely typesafe and written in under 300 lines of code.",
 	"author": {
 		"name": "Henri",
 		"email": "contact@selfmail.app",
 		"url": "https://selfmail.app"
 	},
 	"main": "dist/index.js",
+	"files": ["dist"],
 	"types": "dist/index.d.ts",
 	"repository": {
 		"url": "https://github.com/selfmail/brosel/tree/main/packages/typecmd"
@@ -22,7 +23,13 @@
 		"lint": "biome lint",
 		"format": "biome format",
 		"build": "bun build ./src/index.ts --outdir=dist && bun run build:declaration",
-		"build:declaration": " tsc src/index.ts --declaration --emitDeclarationOnly --skipLibCheck --outDir dist"
+		"build:declaration": " tsc src/index.ts --declaration --emitDeclarationOnly --skipLibCheck --outDir dist",
+		"prepublishOnly": "bun run build",
+		"version": "bun run build",
+		"release:patch": "../../scripts/release-typecmd.sh patch",
+		"release:minor": "../../scripts/release-typecmd.sh minor",
+		"release:major": "../../scripts/release-typecmd.sh major",
+		"test": "bun test tests/"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.0.6"
