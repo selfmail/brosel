@@ -1,4 +1,5 @@
 // Copyright (c) 2025 Selfmail
+/// <reference types="bun" />
 type OptionType = "string" | "number" | "boolean" | "array";
 
 export type Option = {

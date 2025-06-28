@@ -1,11 +1,30 @@
 {
-  "name": "typecmd",
-  "module": "src/index.ts",
-  "type": "module",
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  }
+	"version": "0.0.1",
+	"name": "typecmd",
+	"description": "A short description of your package",
+	"author": {
+		"name": "Henri",
+		"email": "contact@selfmail.app",
+		"url": "https://selfmail.app"
+	},
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"repository": {
+		"url": "https://github.com/selfmail/brosel/tree/main/packages/typecmd"
+	},
+	"license": "MIT",
+	"keywords": ["cli", "typescript", "command", "selfmail", "brosel"],
+	"bugs": {
+		"url": "https://github.com/selfmail/brosel/issues"
+	},
+	"homepage": "https://github.com/selfmail/brosel/blob/main/packages/typecmd/README.md",
+	"scripts": {
+		"lint": "biome lint",
+		"format": "biome format",
+		"build": "bun build ./src/index.ts --outdir=dist && bun run build:declaration",
+		"build:declaration": " tsc src/index.ts --declaration --emitDeclarationOnly --skipLibCheck --outDir dist"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.0.6"
+	}
 }
